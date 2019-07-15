@@ -3,101 +3,101 @@
  * @blog https://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import { Icon } from 'antd'
-import classnames from 'classnames'
-import Agent from '../Agent'
-import styles from './Buttons.less'
+import React from 'react';
+import { Icon } from 'antd';
+import classnames from 'classnames';
+import Agent from '../Agent';
+import styles from './Buttons.less';
 
-export default class Buttons extends React.Component {
-  constructor (props) {
-    super(props)
+export default class Buttons extends React.Component{
+  constructor(props) {
+    super(props);
 
     this.state = {
       top_toggle_on: true,
       search_on: false
-    }
+    };
 
-    this.on_ids = []
+    this.on_ids = [];
   }
 
-  static btnAdd () {
-    Agent.emit('add_hosts')
+  static btnAdd() {
+    Agent.emit('add_hosts');
   }
 
-  btnToggle () {
+  btnToggle() {
     let doToggle = () => {
-      let on = !this.state.top_toggle_on
+      let on = !this.state.top_toggle_on;
 
       Agent.emit('top_toggle', on, this.on_ids, (e) => {
         if (e) {
-          console.log(e)
-          return
+          console.log(e);
+          return;
         }
 
         this.setState({
           top_toggle_on: on
         }, () => {
           if (this.state.top_toggle_on) {
-            this.on_ids = []
+            this.on_ids = [];
           }
-        })
-      })
-    }
+        });
+      });
+    };
 
     if (this.state.top_toggle_on) {
       Agent.emit('get_on_hosts', (ids) => {
-        this.on_ids = ids
-        doToggle()
-      })
+        this.on_ids = ids;
+        doToggle();
+      });
     } else {
-      doToggle()
+      doToggle();
     }
 
   }
 
-  btnSearch () {
+  btnSearch() {
     this.setState({
       search_on: !this.state.search_on
     }, () => {
-      Agent.emit(this.state.search_on ? 'search:start' : 'search:end')
-    })
+      Agent.emit(this.state.search_on ? 'search:start' : 'search:end');
+    });
   }
 
-  cancelSearch () {
+  cancelSearch() {
     this.setState({
       search_on: false
     }, () => {
-      Agent.emit('search_off')
-    })
+      Agent.emit('search_off');
+    });
   }
 
-  componentDidMount () {
+  componentDidMount() {
     Agent.on('to_search', () => {
-      this.btnSearch()
-    })
+      this.btnSearch();
+    });
 
     Agent.on('esc', () => {
       if (this.state.search_on) {
-        this.btnSearch()
+        this.btnSearch();
       }
-    })
+    });
 
-    Agent.on('cancel_search', () => this.setState({search_on: false}))
+    Agent.on('cancel_search', () => this.setState({ search_on: false }));
   }
 
-  render () {
+  render() {
     return (
       <div id="sh-buttons" className={styles.root}>
         <div className={styles.left}>
           <a
-            className={styles["btn-add"]}
+            className={styles['btn-add']}
             href="#"
             onClick={() => Buttons.btnAdd()}
           >
-            <Icon type="plus" className="iconfont" />
+            <Icon type="plus" className="iconfont"/>
           </a>
         </div>
 
@@ -120,6 +120,6 @@ export default class Buttons extends React.Component {
           />
         </div>
       </div>
-    )
+    );
   }
 }

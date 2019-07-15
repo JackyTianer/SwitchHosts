@@ -3,41 +3,41 @@
  * @blog https://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import ListItem from './ListItem'
-import Sortable from 'sortablejs'
-import listToArray from 'wheel-js/src/common/listToArray'
-import Agent from '../Agent'
-import { findPositions } from '../content/kw'
-import styles from './List.less'
+import React from 'react';
+import ListItem from './ListItem';
+import Sortable from 'sortablejs';
+import listToArray from 'wheel-js/src/common/listToArray';
+import Agent from '../Agent';
+import { findPositions } from '../content/kw';
+import styles from './List.less';
 
-export default class List extends React.Component {
+export default class List extends React.Component{
 
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
 
     this.state = {
       kw: ''
-    }
+    };
 
     Agent.on('search:kw', kw => {
-      this.setState({kw})
-    })
+      this.setState({ kw });
+    });
   }
 
-  customItems () {
-    let kw = this.state.kw
+  customItems() {
+    let kw = this.state.kw;
 
-    function match (kw, item) {
-      return findPositions(kw, item.content).length > 0 || findPositions(kw, item.title).length > 0
+    function match(kw, item) {
+      return findPositions(kw, item.content).length > 0 || findPositions(kw, item.title).length > 0;
     }
 
     return this.props.list.map((item, idx) => {
-      let show = true
+      let show = true;
       if (kw && !match(kw, item)) {
-        show = false
+        show = false;
       }
 
       return (
@@ -48,37 +48,37 @@ export default class List extends React.Component {
           show={show}
           {...this.props}
         />
-      )
-    })
+      );
+    });
   }
 
-  getCurrentListFromDOM () {
-    let nodes = this.el_items.getElementsByClassName('list-item')
-    nodes = listToArray(nodes)
-    let ids = nodes.map(el => el.getAttribute('data-id'))
+  getCurrentListFromDOM() {
+    let nodes = this.el_items.getElementsByClassName('list-item');
+    nodes = listToArray(nodes);
+    let ids = nodes.map(el => el.getAttribute('data-id'));
 
-    Agent.emit('sort', ids)
+    Agent.emit('sort', ids);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     Sortable.create(this.el_items, {
       group: 'list-sorting'
       , sort: true
       , animation: 150
       , onStart: () => {
-        Agent.emit('drag_start')
+        Agent.emit('drag_start');
       }
       , onSort: () => {
-        this.getCurrentListFromDOM()
-        Agent.emit('drag_end')
+        this.getCurrentListFromDOM();
+        Agent.emit('drag_end');
         //console.log(evt)
         //console.log(evt.item)
         //console.log(evt.oldIndex, evt.newIndex)
       }
-    })
+    });
   }
 
-  render () {
+  render() {
     return (
       <div id="sh-list" className={styles.root}>
         <ListItem
@@ -89,6 +89,6 @@ export default class List extends React.Component {
           {this.customItems()}
         </div>
       </div>
-    )
+    );
   }
 }

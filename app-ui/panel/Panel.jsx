@@ -3,40 +3,52 @@
  * @blog http://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import Buttons from './Buttons'
+import React from 'react';
+import Buttons from './Buttons';
 //import SearchBar from './searchbar'
-import List from './List'
-import styles from './Panel.less'
-import Agent from '../Agent'
+import List from './List';
+import NginxList from './NginxList';
+import styles from './Panel.less';
+import Agent from '../Agent';
 
-export default class Panel extends React.Component {
-  
-  handleOndragenter (events) {
-    events.preventDefault()
+export default class Panel extends React.Component{
+
+  handleOndragenter(events) {
+    events.preventDefault();
   }
 
-  handleOndragover (events) {
-    events.preventDefault()
+  handleOndragover(events) {
+    events.preventDefault();
   }
 
-  handleOndrop (events) {
-    events.preventDefault()
-    let file = events.dataTransfer.files[0]
+  handleOndrop(events) {
+    events.preventDefault();
+    let file = events.dataTransfer.files[0];
     if (file) {
-      Agent.emit('add_hosts', file.name, 'file://'+file.path)
+      Agent.emit('add_hosts', file.name, 'file://' + file.path);
     }
   }
 
-  render () {
+  render() {
     return (
-      <div id="panel" className={styles.root} onDragEnter={this.handleOndragenter} onDragOver={this.handleOndragover} onDrop={this.handleOndrop}>
-        <List {...this.props}/>
-        {/*<SearchBar/>*/}
+      <div id="panel" className={styles.root}>
+        <div onDragEnter={this.handleOndragenter} onDragOver={this.handleOndragover}
+             onDrop={this.handleOndrop}>
+          <List {...this.props}/>
+        </div>
+        <div>
+          <NginxList {...this.props}/>
+        </div>
         <Buttons/>
       </div>
-    )
+      // <div id="panel" className={styles.root} onDragEnter={this.handleOndragenter} onDragOver={this.handleOndragover}
+      //      onDrop={this.handleOndrop}>
+      //   <List {...this.props}/>
+      //   {/*<SearchBar/>*/}
+      //   <Buttons/>
+      // </div>
+    );
   }
 }

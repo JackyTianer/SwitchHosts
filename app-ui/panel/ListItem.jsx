@@ -3,43 +3,43 @@
  * @blog https://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import classnames from 'classnames'
-import { Icon } from 'antd'
-import Agent from '../Agent'
-import isInViewport from 'wheel-js/src/browser/isInViewport'
-import styles from './ListItem.less'
+import React from 'react';
+import classnames from 'classnames';
+import { Icon } from 'antd';
+import Agent from '../Agent';
+import isInViewport from 'wheel-js/src/browser/isInViewport';
+import styles from './ListItem.less';
 
-export default class ListItem extends React.Component {
-  constructor (props) {
-    super(props)
+export default class ListItem extends React.Component{
+  constructor(props) {
+    super(props);
 
-    this.is_sys = !!this.props.sys
-    this.state = {}
+    this.is_sys = !!this.props.sys;
+    this.state = {};
   }
 
-  getTitle () {
-    let {lang} = this.props
+  getTitle() {
+    let { lang } = this.props;
     return this.is_sys ? lang.sys_hosts_title : this.props.data.title ||
-      lang.untitled
+      lang.untitled;
   }
 
-  beSelected () {
-    this.props.setCurrent(this.props.data)
+  beSelected() {
+    this.props.setCurrent(this.props.data);
   }
 
-  toggle () {
-    Agent.emit('toggle_hosts', Object.assign({}, this.props.data))
+  toggle() {
+    Agent.emit('toggle_hosts', Object.assign({}, this.props.data));
   }
 
-  toEdit () {
-    Agent.emit('edit_hosts', Object.assign({}, this.props.data))
+  toEdit() {
+    Agent.emit('edit_hosts', Object.assign({}, this.props.data));
   }
 
-  componentDidMount () {
-    let {just_added_id, data} = this.props
+  componentDidMount() {
+    let { just_added_id, data } = this.props;
     //Agent.on('select_hosts', id => {
     //  if (id && id === this.props.data.id) {
     //    this.beSelected()
@@ -48,34 +48,34 @@ export default class ListItem extends React.Component {
     //})
 
     if (!this.el) {
-      return
+      return;
     }
 
-    let el = this.el
+    let el = this.el;
     if (just_added_id === data.id && !isInViewport(el)) {
-      el.scrollIntoView()
-      this.props.justAdd(null)
+      el.scrollIntoView();
+      this.props.justAdd(null);
     }
   }
 
-  render () {
-    let {data, sys, current, show} = this.props
-    if (!data) return null
+  render() {
+    let { data, sys, current, show } = this.props;
+    if (!data) return null;
 
-    let is_selected = data.id === current.id || (data.is_sys && current.is_sys)
+    let is_selected = data.id === current.id || (data.is_sys && current.is_sys);
     let attrs = {
       'data-id': data.id || ''
-    }
+    };
 
-    let icon_type
+    let icon_type;
     if (sys) {
-      icon_type = 'desktop'
+      icon_type = 'desktop';
     } else if (data.where === 'remote') {
-      icon_type = 'global'
+      icon_type = 'global';
     } else if (data.where === 'group') {
-      icon_type = 'copy'
+      icon_type = 'copy';
     } else {
-      icon_type = 'file-text'
+      icon_type = 'file-text';
     }
 
     return (
@@ -130,6 +130,6 @@ export default class ListItem extends React.Component {
         />
         <span>{this.getTitle()}</span>
       </div>
-    )
+    );
   }
 }
