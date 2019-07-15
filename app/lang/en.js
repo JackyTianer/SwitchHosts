@@ -28,7 +28,7 @@ exports.content = {
   , days: 'days'
   , del_hosts: 'Delete current hosts'
   , edit: 'Edit'
-  , edit_hosts: 'Edit hosts'
+  , edit_hosts: 'Edit Rules'
   , export: 'Export'
   , feedback: 'Feedback'
   , file: 'File'
@@ -37,6 +37,7 @@ exports.content = {
   , hide_dock_icon: 'Hide Dock Icon'
   , homepage: 'Homepage'
   , hosts_title: 'Hosts title'
+  , nginx_title:'Nginx title'
   , hosts_title_cant_be_empty: 'Hosts title could not be empty!'
   , hosts_switched: 'Hosts has been switched.'
   , hour: 'hour'
@@ -111,5 +112,6 @@ exports.content = {
   , where_group: 'Group'
   , where_local: 'Local'
   , where_remote: 'Remote'
+  , where_nginx: 'Nginx'
   , window: 'Window'
 }

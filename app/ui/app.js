@@ -1,4 +1,4 @@
-/*! SwitchHosts! app.js v3.3.13.5384, 2019-07-15 15:02:33 */
+/*! SwitchHosts! app.js v3.3.13.5384, 2019-07-15 16:58:51 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1365,14 +1365,17 @@ var map = {
 	"./get_on_hosts.js": "./app-ui/events/get_on_hosts.js",
 	"./index.js": "./app-ui/events/index.js",
 	"./list_updated.js": "./app-ui/events/list_updated.js",
+	"./nginx_list_updated.js": "./app-ui/events/nginx_list_updated.js",
 	"./reload.js": "./app-ui/events/reload.js",
 	"./save.js": "./app-ui/events/save.js",
+	"./save_nginx.js": "./app-ui/events/save_nginx.js",
 	"./sort.js": "./app-ui/events/sort.js",
 	"./sudo_cancel.js": "./app-ui/events/sudo_cancel.js",
 	"./sudo_pswd.js": "./app-ui/events/sudo_pswd.js",
 	"./toggle_hosts.js": "./app-ui/events/toggle_hosts.js",
 	"./top_toggle.js": "./app-ui/events/top_toggle.js",
-	"./update_hosts.js": "./app-ui/events/update_hosts.js"
+	"./update_hosts.js": "./app-ui/events/update_hosts.js",
+	"./update_nginx.js": "./app-ui/events/update_nginx.js"
 };
 
 
@@ -1420,10 +1423,14 @@ var map = {
 	"./index.js": "./app-ui/events/index.js",
 	"./list_updated": "./app-ui/events/list_updated.js",
 	"./list_updated.js": "./app-ui/events/list_updated.js",
+	"./nginx_list_updated": "./app-ui/events/nginx_list_updated.js",
+	"./nginx_list_updated.js": "./app-ui/events/nginx_list_updated.js",
 	"./reload": "./app-ui/events/reload.js",
 	"./reload.js": "./app-ui/events/reload.js",
 	"./save": "./app-ui/events/save.js",
 	"./save.js": "./app-ui/events/save.js",
+	"./save_nginx": "./app-ui/events/save_nginx.js",
+	"./save_nginx.js": "./app-ui/events/save_nginx.js",
 	"./sort": "./app-ui/events/sort.js",
 	"./sort.js": "./app-ui/events/sort.js",
 	"./sudo_cancel": "./app-ui/events/sudo_cancel.js",
@@ -1435,7 +1442,9 @@ var map = {
 	"./top_toggle": "./app-ui/events/top_toggle.js",
 	"./top_toggle.js": "./app-ui/events/top_toggle.js",
 	"./update_hosts": "./app-ui/events/update_hosts.js",
-	"./update_hosts.js": "./app-ui/events/update_hosts.js"
+	"./update_hosts.js": "./app-ui/events/update_hosts.js",
+	"./update_nginx": "./app-ui/events/update_nginx.js",
+	"./update_nginx.js": "./app-ui/events/update_nginx.js"
 };
 
 
@@ -1711,6 +1720,57 @@ module.exports = function (app, new_list) {
 
 /***/ }),
 
+/***/ "./app-ui/events/nginx_list_updated.js":
+/*!*********************************************!*\
+  !*** ./app-ui/events/nginx_list_updated.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+
+
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = function (app, new_list) {
+  let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  let state = {
+    nginx_config_list: new_list
+  };
+  return Promise.resolve().then(() => {
+    let current = app.state.current;
+
+    if (current && current.is_sys) {
+      return _Agent.default.pact('getSysNginxConfigs').then(sys_config => {
+        state.sys_nginx_config = sys_config;
+        state.current = sys_config;
+      });
+    } else if (config) {
+      state.current = config;
+    } else if (current) {
+      let c = new_list.find(i => i.id === current.id);
+
+      if (c) {
+        state.current = c;
+      }
+    }
+  }).then(() => {
+    app.setState(state, () => {
+      if (config) {
+        _Agent.default.emit('select', config.id);
+      }
+    });
+  });
+};
+
+/***/ }),
+
 /***/ "./app-ui/events/reload.js":
 /*!*********************************!*\
   !*** ./app-ui/events/reload.js ***!
@@ -1758,6 +1818,35 @@ module.exports = function (app, list) {
   //  console.log('saved.', hosts && hosts.content.substring(0, 50))
   //})
   .catch(e => {
+    console.log(e);
+  });
+};
+
+/***/ }),
+
+/***/ "./app-ui/events/save_nginx.js":
+/*!*************************************!*\
+  !*** ./app-ui/events/save_nginx.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+
+
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const updated = __webpack_require__(/*! ./nginx_list_updated */ "./app-ui/events/nginx_list_updated.js");
+
+module.exports = function (app, list) {
+  let config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  return _Agent.default.pact('saveNginxConfigs', list).then(new_list => updated(app, new_list, config)).catch(e => {
     console.log(e);
   });
 };
@@ -1978,6 +2067,40 @@ module.exports = (app, hosts) => {
 
 /***/ }),
 
+/***/ "./app-ui/events/update_nginx.js":
+/*!***************************************!*\
+  !*** ./app-ui/events/update_nginx.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+ //import Agent from '../Agent'
+//import cleanData from '../../app/server/cleanData'
+
+const save = __webpack_require__(/*! ./save_nginx */ "./app-ui/events/save_nginx.js");
+
+module.exports = (app, config) => {
+  let list = app.state.nginx_config_list.slice(0);
+  let idx = list.findIndex(item => item.id === config.id);
+
+  if (idx === -1) {
+    list.push(Object.assign({}, config));
+  } else {
+    let old_config = list[idx];
+    list.splice(idx, 1, Object.assign({}, old_config, config));
+  } //list = cleanData(list)
+
+
+  save(app, list, config);
+};
+
+/***/ }),
+
 /***/ "./app-ui/frame/EditPrompt.jsx":
 /*!*************************************!*\
   !*** ./app-ui/frame/EditPrompt.jsx ***!
@@ -2168,8 +2291,15 @@ class EditPrompt extends _react.default.Component {
     }
 
     delete data['is_add'];
+    console.log(this.state.where);
 
-    _Agent.default.emit('update_hosts', data);
+    if (this.state.where === 'nginx') {
+      _Agent.default.emit('update_nginx', Object.assign({}, data, {
+        mode: 'nginx'
+      }));
+    } else {
+      _Agent.default.emit('update_hosts', data);
+    }
 
     this.setState({
       show: false
@@ -2305,6 +2435,7 @@ class EditPrompt extends _react.default.Component {
 
   body() {
     let lang = this.props.lang;
+    let where = this.state.where;
     return _react.default.createElement("div", {
       ref: c => this.el_body = c
     }, _react.default.createElement("div", {
@@ -2326,11 +2457,15 @@ class EditPrompt extends _react.default.Component {
       value: "group"
     }, _react.default.createElement(_icon.default, {
       type: "copy"
-    }), " ", lang.where_group))), _react.default.createElement("div", {
+    }), " ", lang.where_group), _react.default.createElement(RadioButton, {
+      value: "nginx"
+    }, _react.default.createElement(_icon.default, {
+      type: "control"
+    }), " ", lang.where_nginx))), _react.default.createElement("div", {
       className: "ln"
     }, _react.default.createElement("div", {
       className: "title"
-    }, lang.hosts_title), _react.default.createElement("div", {
+    }, where !== 'nginx' ? lang.hosts_title : lang.nginx_title), _react.default.createElement("div", {
       className: "cnt"
     }, _react.default.createElement(_input.default, {
       ref: c => this.el_title = c,

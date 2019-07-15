@@ -3,24 +3,24 @@
  * @blog https://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import MyFrame from './MyFrame'
-import classnames from 'classnames'
-import { Icon, Input, Radio, Select } from 'antd'
-import Group from './Group'
-import Agent from '../Agent'
-import makeId from '../../app/libs/make-id'
-import './EditPrompt.less'
+import React from 'react';
+import MyFrame from './MyFrame';
+import classnames from 'classnames';
+import { Icon, Input, Radio, Select } from 'antd';
+import Group from './Group';
+import Agent from '../Agent';
+import makeId from '../../app/libs/make-id';
+import './EditPrompt.less';
 
-const RadioButton = Radio.Button
-const RadioGroup = Radio.Group
-const Option = Select.Option
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
+const Option = Select.Option;
 
-export default class EditPrompt extends React.Component {
-  constructor (props) {
-    super(props)
+export default class EditPrompt extends React.Component{
+  constructor(props) {
+    super(props);
 
     this.state = {
       show: false,
@@ -32,31 +32,31 @@ export default class EditPrompt extends React.Component {
       refresh_interval: 0,
       is_loading: false,
       include: []
-    }
+    };
 
-    this.current_hosts = null
+    this.current_hosts = null;
   }
 
-  tryToFocus () {
-    let el = this.el_body && this.el_body.querySelector('input[type=text]')
-    el && el.focus()
+  tryToFocus() {
+    let el = this.el_body && this.el_body.querySelector('input[type=text]');
+    el && el.focus();
   }
 
-  clear () {
+  clear() {
     this.setState({
       where: 'local',
       title: '',
       url: '',
       last_refresh: null,
       refresh_interval: 0
-    })
+    });
   }
 
-  componentDidMount () {
+  componentDidMount() {
     Agent.on('add_hosts', (title, uri) => {
-      var goWhere = ''
+      var goWhere = '';
       if (uri) {
-        goWhere = 'remote'
+        goWhere = 'remote';
       }
       this.setState({
         show: true,
@@ -65,16 +65,16 @@ export default class EditPrompt extends React.Component {
         title: title,
         where: goWhere,
         url: uri
-      })
+      });
       setTimeout(() => {
-        this.tryToFocus()
-      }, 100)
-    })
+        this.tryToFocus();
+      }, 100);
+    });
 
     Agent.on('edit_hosts', (hosts) => {
-      this.current_hosts = hosts
-      let include = hosts.include || []
-      include = Array.from(new Set(include))
+      this.current_hosts = hosts;
+      let include = hosts.include || [];
+      include = Array.from(new Set(include));
 
       this.setState({
         id: hosts.id,
@@ -86,120 +86,125 @@ export default class EditPrompt extends React.Component {
         last_refresh: hosts.last_refresh || null,
         refresh_interval: hosts.refresh_interval || 0,
         include
-      })
+      });
       setTimeout(() => {
-        this.tryToFocus()
-      }, 100)
-    })
+        this.tryToFocus();
+      }, 100);
+    });
 
     Agent.on('list_updated', list => {
-      let hosts = list.find(i => i.id === this.state.id)
+      let hosts = list.find(i => i.id === this.state.id);
       if (hosts) {
-        this.current_hosts = hosts
-        this.setState({last_refresh: hosts.last_refresh})
-        setTimeout(() => this.setState({is_loading: false}), 500)
+        this.current_hosts = hosts;
+        this.setState({ last_refresh: hosts.last_refresh });
+        setTimeout(() => this.setState({ is_loading: false }), 500);
       }
-    })
+    });
 
     Agent.on('refresh_end', (id) => {
       if (this.state.is_loading) {
         this.setState({
           is_loading: false
-        })
+        });
 
         if (id && id === this.current_hosts.id) {
           this.setState({
             last_refresh: this.current_hosts.last_refresh
-          })
+          });
         }
       }
-    })
+    });
   }
 
-  onOK () {
+  onOK() {
     this.setState({
       title: (this.state.title || '').replace(/^\s+|\s+$/g, ''),
       url: (this.state.url || '').replace(/^\s+|\s+$/g, '')
-    })
+    });
 
     if (this.state.title === '') {
-      this.el_title.focus()
-      return false
+      this.el_title.focus();
+      return false;
     }
 
     if (this.state.where === 'remote' && this.state.url === '') {
-      this.el_url.focus()
-      return false
+      this.el_url.focus();
+      return false;
     }
 
-    let new_id = makeId()
+    let new_id = makeId();
     let data = Object.assign({}, this.current_hosts, this.state,
       this.state.is_add ? {
         id: new_id,
         content: `# ${this.state.title}`,
         on: false
-      } : {})
+      } : {});
 
-    if (!data.id) data.id = new_id
+    if (!data.id) data.id = new_id;
     if (this.state.is_add) {
-      this.props.justAdd(new_id)
+      this.props.justAdd(new_id);
     }
     if (this.state.where !== 'group') {
-      data.include = []
+      data.include = [];
+    }
+    delete data['is_add'];
+    console.log(this.state.where);
+    if (this.state.where === 'nginx') {
+      Agent.emit('update_nginx', Object.assign({}, data, { mode: 'nginx' }));
+    } else {
+      Agent.emit('update_hosts', data);
     }
 
-    delete data['is_add']
-    Agent.emit('update_hosts', data)
 
     this.setState({
       show: false
-    })
-    this.clear()
+    });
+    this.clear();
   }
 
-  onCancel () {
+  onCancel() {
     this.setState({
       show: false
-    })
-    this.clear()
+    });
+    this.clear();
   }
 
-  confirmDel () {
-    let {lang} = this.props
-    if (!confirm(lang.confirm_del)) return
-    Agent.emit('del_hosts', this.current_hosts)
+  confirmDel() {
+    let { lang } = this.props;
+    if (!confirm(lang.confirm_del)) return;
+    Agent.emit('del_hosts', this.current_hosts);
     this.setState({
       show: false
-    })
-    this.clear()
+    });
+    this.clear();
   }
 
-  updateInclude (include) {
-    this.setState({include})
+  updateInclude(include) {
+    this.setState({ include });
   }
 
-  getRefreshOptions () {
-    let {lang} = this.props
+  getRefreshOptions() {
+    let { lang } = this.props;
     let k = [
       [0, `${lang.never}`],
       [1, `1 ${lang.hour}`],
       [24, `24 ${lang.hours}`],
       [168, `7 ${lang.days}`]
-    ]
+    ];
     if (Agent.IS_DEV) {
-      k.splice(1, 0, [0.002778, `10s (for DEV)`]) // dev test only
+      k.splice(1, 0, [0.002778, `10s (for DEV)`]); // dev test only
     }
     return k.map(([v, n], idx) => {
       return (
         <Option value={v} key={idx}>{n}</Option>
-      )
-    })
+      );
+    });
   }
 
-  getEditOperations () {
-    if (this.state.is_add) return null
+  getEditOperations() {
+    if (this.state.is_add) return null;
 
-    let {lang} = this.props
+    let { lang } = this.props;
 
     return (
       <div>
@@ -212,33 +217,33 @@ export default class EditPrompt extends React.Component {
           </a>
         </div>
       </div>
-    )
+    );
   }
 
-  refresh () {
-    if (this.state.is_loading) return
+  refresh() {
+    if (this.state.is_loading) return;
 
-    Agent.emit('check_hosts_refresh', this.current_hosts)
+    Agent.emit('check_hosts_refresh', this.current_hosts);
     this.setState({
       is_loading: true
-    })
+    });
 
   }
 
-  renderGroup () {
-    if (this.state.where !== 'group') return null
+  renderGroup() {
+    if (this.state.where !== 'group') return null;
 
     return <Group
       list={this.props.list}
       include={this.state.include}
       updateInclude={this.updateInclude.bind(this)}
-    />
+    />;
   }
 
-  renderRemoteInputs () {
-    if (this.state.where !== 'remote') return null
+  renderRemoteInputs() {
+    if (this.state.where !== 'remote') return null;
 
-    let {lang} = this.props
+    let { lang } = this.props;
 
     return (
       <div className="remote-ipts">
@@ -249,7 +254,7 @@ export default class EditPrompt extends React.Component {
               ref={c => this.el_url = c}
               value={this.state.url}
               placeholder="http:// or file:///"
-              onChange={e => this.setState({url: e.target.value})}
+              onChange={e => this.setState({ url: e.target.value })}
               onKeyDown={e => (e.keyCode === 13 && this.onOK()) || (e.keyCode === 27 && this.onCancel())}
             />
           </div>
@@ -259,8 +264,8 @@ export default class EditPrompt extends React.Component {
           <div className="cnt">
             <Select
               value={this.state.refresh_interval}
-              style={{width: 120}}
-              onChange={v => this.setState({refresh_interval: parseFloat(v) || 0})}
+              style={{ width: 120 }}
+              onChange={v => this.setState({ refresh_interval: parseFloat(v) || 0 })}
             >
               {this.getRefreshOptions()}
             </Select>
@@ -284,28 +289,31 @@ export default class EditPrompt extends React.Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  body () {
-    let {lang} = this.props
+  body() {
+    let { lang } = this.props;
+    let { where } = this.state;
     return (
       <div ref={c => this.el_body = c}>
         <div className="ln">
-          <RadioGroup onChange={e => this.setState({where: e.target.value})} value={this.state.where}>
-            <RadioButton value="local"><Icon type="file-text" /> {lang.where_local}</RadioButton>
-            <RadioButton value="remote"><Icon type="global" /> {lang.where_remote}</RadioButton>
-            <RadioButton value="group"><Icon type="copy" /> {lang.where_group}</RadioButton>
+          <RadioGroup onChange={e => this.setState({ where: e.target.value })} value={this.state.where}>
+            <RadioButton value="local"><Icon type="file-text"/> {lang.where_local}</RadioButton>
+            <RadioButton value="remote"><Icon type="global"/> {lang.where_remote}</RadioButton>
+            <RadioButton value="group"><Icon type="copy"/> {lang.where_group}</RadioButton>
+            <RadioButton value="nginx"><Icon type="control"/> {lang.where_nginx}</RadioButton>
           </RadioGroup>
         </div>
 
         <div className="ln">
-          <div className="title">{lang.hosts_title}</div>
+          <div className="title">{where !== 'nginx' ? lang.hosts_title : lang.nginx_title}</div>
+
           <div className="cnt">
             <Input
               ref={c => this.el_title = c}
               value={this.state.title}
-              onChange={(e) => this.setState({title: e.target.value})}
+              onChange={(e) => this.setState({ title: e.target.value })}
               onKeyDown={(e) => (e.keyCode === 13 && this.onOK() || e.keyCode === 27 && this.onCancel())}
             />
           </div>
@@ -314,11 +322,11 @@ export default class EditPrompt extends React.Component {
         {this.renderGroup()}
         {this.getEditOperations()}
       </div>
-    )
+    );
   }
 
-  render () {
-    let {lang} = this.props
+  render() {
+    let { lang } = this.props;
 
     return (
       <MyFrame
@@ -329,6 +337,6 @@ export default class EditPrompt extends React.Component {
         onCancel={() => this.onCancel()}
         lang={this.props.lang}
       />
-    )
+    );
   }
 }

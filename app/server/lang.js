@@ -3,41 +3,41 @@
  * @blog http://oldj.net
  */
 
-'use strict'
+'use strict';
 
 const languages = {
   'en': require('../lang/en').content,
   'cn': require('../lang/cn').content
-}
-
+};
+console.log(languages);
 module.exports = {
   languages: languages,
   lang_list: (() => {
-    let list = []
+    let list = [];
     for (let k in languages) {
       if (languages.hasOwnProperty(k)) {
         list.push({
           key: k,
           name: languages[k]._lang_name
-        })
+        });
       }
     }
-    return list
+    return list;
   })(),
   getLang: (lang) => {
-    lang = lang.toLowerCase()
+    lang = lang.toLowerCase();
     if (lang === 'cn' || lang === 'zh-cn') {
-      lang = 'cn'
+      lang = 'cn';
     } else {
-      lang = 'en'
+      lang = 'en';
     }
-    return languages[lang] || languages['en']
+    return languages[lang] || languages['en'];
   },
   fill: (tpl, ...vals) => {
     vals.map((v, idx) => {
-      let r = new RegExp('\\$\\{' + idx + '\\}', 'g')
-      tpl = tpl.replace(r, v)
-    })
-    return tpl
+      let r = new RegExp('\\$\\{' + idx + '\\}', 'g');
+      tpl = tpl.replace(r, v);
+    });
+    return tpl;
   }
-}
+};

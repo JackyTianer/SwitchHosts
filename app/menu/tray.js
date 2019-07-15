@@ -139,6 +139,10 @@ function makeTray (app, contents, sys_lang = 'en') {
     svr.emit('update_tray')
   })
 
+  svr.on('nginx_saved', () => {
+    svr.emit('update_tray')
+  })
+
   svr.emit('update_tray')
 }
 

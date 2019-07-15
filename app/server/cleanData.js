@@ -24,7 +24,8 @@ module.exports = (list) => {
       'url',
       'last_refresh',
       'refresh_interval',
-      'include'
+      'include',
+      'mode'
     ]
     valid_keys.map(k => {
       if (item.hasOwnProperty(k)) {
