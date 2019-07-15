@@ -34,7 +34,6 @@ export default class App extends React.Component{
     };
 
     this.is_dragging = false;
-    console.log(this.is_dragging);
     this.loadHosts();
     this.loadNginxConfigs();
 
@@ -138,12 +137,12 @@ export default class App extends React.Component{
           .then(_config => {
             this.setState({
               sys_nginx_config: _config,
-              current: _config
+              current: Object.assign({}, _config, { mode: 'nginx' })
             });
           });
       } else {
         this.setState({
-          current: data
+          current: Object.assign({}, data, { mode: 'nginx' })
         });
       }
     }

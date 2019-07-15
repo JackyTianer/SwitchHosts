@@ -3,44 +3,44 @@
  * @blog https://oldj.net
  */
 
-'use strict'
+'use strict';
 
-import React from 'react'
-import { Icon } from 'antd'
-import classnames from 'classnames'
-import SearchBar from './SearchBar'
-import Agent from '../Agent'
-import Editor from './Editor'
+import React from 'react';
+import { Icon } from 'antd';
+import classnames from 'classnames';
+import SearchBar from './SearchBar';
+import Agent from '../Agent';
+import Editor from './Editor';
 
-import styles from './Content.less'
+import styles from './Content.less';
 
-export default class Content extends React.Component {
-  constructor (props) {
-    super(props)
+export default class Content extends React.Component{
+  constructor(props) {
+    super(props);
 
     this.state = {
       is_loading: this.props.current.is_loading,
       show_search: false
-    }
+    };
   }
 
-  setValue (v) {
-    this.props.setHostsContent(v)
+  setValue(v) {
+    this.props.setHostsContent(v);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     Agent.on('search:start', () => {
-      this.setState({show_search: true})
-    })
+      this.setState({ show_search: true });
+    });
 
     Agent.on('search:end', () => {
-      this.setState({show_search: false})
-    })
+      this.setState({ show_search: false });
+    });
   }
 
-  render () {
-    let {current, readonly, lang} = this.props
-    let {show_search} = this.state
+  render() {
+    let { current, readonly, lang } = this.props;
+    let { show_search } = this.state;
 
     return (
       <div id="sh-content" className={styles.root}>
@@ -69,6 +69,7 @@ export default class Content extends React.Component {
           readonly={readonly}
           id={current.id}
           code={current.content || ''}
+          mode={current.mode || 'hosts'}
           setValue={this.setValue.bind(this)}
           show_search={show_search}
         />
@@ -78,6 +79,6 @@ export default class Content extends React.Component {
           </div>
         ) : null}
       </div>
-    )
+    );
   }
 }
