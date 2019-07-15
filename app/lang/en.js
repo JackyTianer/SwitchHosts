@@ -100,6 +100,7 @@ exports.content = {
   , source_code: 'Source Code'
   , sudo_pswd: 'Password'
   , sys_hosts_title: 'System Hosts'
+  , sys_nginx_title: 'System Nginx Config'
   , tmp_clean: 'Temporarily turn off all rules.'
   , tmp_recover: 'Recover rules.'
   , toggle_dock_icon: 'Toggle Dock Icon'

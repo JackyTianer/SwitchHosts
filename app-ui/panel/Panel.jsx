@@ -39,16 +39,12 @@ export default class Panel extends React.Component{
           <List {...this.props}/>
         </div>
         <div>
-          <NginxList {...this.props}/>
+          <NginxList current={this.props.current} sys_nginx_config={this.props.sys_nginx_config}
+                     nginx_config_list={this.props.nginx_config_list} lang={this.props.lang}
+                     setCurrent={this.props.setCurrent}/>
         </div>
         <Buttons/>
       </div>
-      // <div id="panel" className={styles.root} onDragEnter={this.handleOndragenter} onDragOver={this.handleOndragover}
-      //      onDrop={this.handleOndrop}>
-      //   <List {...this.props}/>
-      //   {/*<SearchBar/>*/}
-      //   <Buttons/>
-      // </div>
     );
   }
 }

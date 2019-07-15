@@ -3,7 +3,7 @@
  * @blog http://oldj.net
  */
 
-'use strict'
+'use strict';
 
 exports.content = {
   _lang_name: '简体中文'
@@ -100,6 +100,7 @@ exports.content = {
   , source_code: '源码'
   , sudo_pswd: '密码'
   , sys_hosts_title: '系统 Hosts'
+  , sys_nginx_title: '系统 Nginx 配置'
   , tmp_clean: '临时去掉所有绑定'
   , tmp_recover: '恢复绑定'
   , toggle_dock_icon: '显示/隐藏 Dock 图标'
@@ -111,4 +112,4 @@ exports.content = {
   , where_local: '本地'
   , where_remote: '远程'
   , window: '窗口'
-}
+};

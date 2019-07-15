@@ -4,11 +4,14 @@ import NginxListItem from './NginxListItem';
 
 class NginxList extends React.Component{
   customItems() {
-    return this.props.list.map((item, idx) => {
+    return this.props.nginx_config_list.map((item, idx) => {
       return (
         <NginxListItem
           data={item}
           idx={idx}
+          lang={this.props.lang}
+          current={this.props.current}
+          setCurrent={this.props.setCurrent}
           key={'hosts-' + idx + Math.random()}
           show={true}
         />
@@ -21,6 +24,9 @@ class NginxList extends React.Component{
       <div className={styles.root}>
         <NginxListItem
           data={this.props.sys_nginx_config}
+          current={this.props.current}
+          lang={this.props.lang}
+          setCurrent={this.props.setCurrent}
           sys={true}/>
         <div ref={c => this.el_items = c} className={styles['custom-items']}>
           {this.customItems()}

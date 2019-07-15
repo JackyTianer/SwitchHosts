@@ -15,7 +15,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const version = require('../app/version').version.join('.')
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: {
     app: './app-ui/index.jsx'
     //, vendor: ['react', 'antd']
@@ -70,26 +70,26 @@ module.exports = {
     noParse: [/\bAgent\b/]
   },
   optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
-          compress: true,
-          ecma: 6,
-          mangle: true,
-          output: {
-            ascii_only: true
-          }
-        },
-        sourceMap: true
-      })
-    ]
+    // minimizer: [
+    //   new UglifyJsPlugin({
+    //     cache: true,
+    //     parallel: true,
+    //     uglifyOptions: {
+    //       compress: true,
+    //       ecma: 6,
+    //       mangle: true,
+    //       output: {
+    //         ascii_only: true
+    //       }
+    //     },
+    //     sourceMap: true
+    //   })
+    // ]
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
+        NODE_ENV: JSON.stringify('development')
       }
     }),
     new ExtractTextPlugin({

@@ -115,19 +115,37 @@ export default class App extends React.Component{
     });
   }
 
-  setCurrent(hosts) {
-    if (hosts.is_sys) {
-      Agent.pact('getSysHosts')
-        .then(_hosts => {
-          this.setState({
-            sys_hosts: _hosts,
-            current: _hosts
+
+  setCurrent(data, type = 'host') {
+    if (type === 'host') {
+      if (data.is_sys) {
+        Agent.pact('getSysHosts')
+          .then(_hosts => {
+            console.log(_hosts);
+            this.setState({
+              sys_hosts: _hosts,
+              current: _hosts
+            });
           });
+      } else {
+        this.setState({
+          current: data
         });
-    } else {
-      this.setState({
-        current: hosts
-      });
+      }
+    } else if (type === 'nginx') {
+      if (data.is_sys) {
+        Agent.pact('getSysNginxConfigs')
+          .then(_config => {
+            this.setState({
+              sys_nginx_config: _config,
+              current: _config
+            });
+          });
+      } else {
+        this.setState({
+          current: data
+        });
+      }
     }
   }
 
@@ -214,8 +232,8 @@ export default class App extends React.Component{
         <Panel
           list={this.state.list}
           sys_hosts={this.state.sys_hosts}
-          nginx_list={this.state.nginx_config_list}
-          sys_nginx_list={this.state.sys_nginx_config}
+          nginx_config_list={this.state.nginx_config_list}
+          sys_nginx_config={this.state.sys_nginx_config}
           current={current}
           setCurrent={this.setCurrent.bind(this)}
           lang={this.state.lang}

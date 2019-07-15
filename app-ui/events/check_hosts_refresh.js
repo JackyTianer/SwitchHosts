@@ -16,7 +16,6 @@ module.exports = (app, hosts) => {
       Agent.emit('list_updated', list)
     })
     .catch(e => {
-      console.log(e)
       Agent.emit('refresh_end', hosts.id)
       Agent.emit('err', {
         title: 'Remote Hosts Refresh Error',

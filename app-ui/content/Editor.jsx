@@ -123,7 +123,6 @@ export default class Editor extends React.Component {
   }
 
   docSelect (pos) {
-    console.log(pos)
     if (!pos || !Array.isArray(pos)) return
     let doc = this.codemirror.getDoc()
     doc.setCursor(pos[1])
