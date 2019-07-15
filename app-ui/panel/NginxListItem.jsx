@@ -1,6 +1,7 @@
 import { Icon } from 'antd';
 import classnames from 'classnames';
 import React from 'react';
+import Agent from '../Agent';
 import styles from './ListItem.less';
 
 class NginxListItem extends React.Component{
@@ -22,6 +23,8 @@ class NginxListItem extends React.Component{
   }
 
   toEdit() {
+    console.log(this.props.data);
+    Agent.emit('edit_hosts', Object.assign({}, this.props.data));
   }
 
   toggle() {

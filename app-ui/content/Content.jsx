@@ -25,7 +25,11 @@ export default class Content extends React.Component{
   }
 
   setValue(v) {
-    this.props.setHostsContent(v);
+    if (v.mode === 'nginx') {
+      this.props.setNginxContent(v.content);
+    } else if (v.mode === 'hosts') {
+      this.props.setHostsContent(v.content);
+    }
   }
 
   componentDidMount() {

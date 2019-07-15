@@ -80,7 +80,10 @@ export default class Editor extends React.Component{
   }
 
   setValue(v) {
-    this.props.setValue(v);
+    this.props.setValue({
+      mode:this.props.mode,
+      content:v
+    });
   }
 
   toComment() {

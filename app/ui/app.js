@@ -358,10 +358,18 @@ class App extends _react.default.Component {
   }
 
   toSave() {
+    let type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'hosts';
     clearTimeout(this._t);
-    this._t = setTimeout(() => {
-      _Agent.default.emit('save', this.state.list, null, true);
-    }, 1000);
+
+    if (type === 'hosts') {
+      this._t = setTimeout(() => {
+        _Agent.default.emit('save', this.state.list, null, true);
+      }, 1000);
+    } else if (type === 'nginx') {
+      this._t = setTimeout(() => {
+        _Agent.default.emit('saveNginx', this.state.nginx_config_list, null, true);
+      }, 1000);
+    }
   }
 
   setHostsContent(v) {
@@ -386,6 +394,31 @@ class App extends _react.default.Component {
       list
     }, () => {
       this.toSave();
+    });
+  }
+
+  setNginxContent(v) {
+    let _this$state2 = this.state,
+        current = _this$state2.current,
+        nginx_config_list = _this$state2.nginx_config_list;
+    if (current.content === v) return; // not changed
+    //current = Object.assign({}, current, {
+    //  content: v || ''
+    //})
+    //list = list.slice(0)
+
+    current.content = v;
+    let idx = nginx_config_list.findIndex(i => i.id === current.id);
+
+    if (idx !== -1) {
+      nginx_config_list.splice(idx, 1, current);
+    }
+
+    this.setState({
+      current,
+      nginx_config_list
+    }, () => {
+      this.toSave('nginx');
     });
   }
 
@@ -448,6 +481,7 @@ class App extends _react.default.Component {
       current: current,
       readonly: App.isReadOnly(current),
       setHostsContent: this.setHostsContent.bind(this),
+      setNginxContent: this.setNginxContent.bind(this),
       lang: this.state.lang
     }), _react.default.createElement(_About.default, {
       lang: this.state.lang
@@ -681,7 +715,11 @@ class Content extends _react.default.Component {
   }
 
   setValue(v) {
-    this.props.setHostsContent(v);
+    if (v.mode === 'nginx') {
+      this.props.setNginxContent(v.content);
+    } else if (v.mode === 'hosts') {
+      this.props.setHostsContent(v.content);
+    }
   }
 
   componentDidMount() {
@@ -869,7 +907,10 @@ class Editor extends _react.default.Component {
   }
 
   setValue(v) {
-    this.props.setValue(v);
+    this.props.setValue({
+      mode: this.props.mode,
+      content: v
+    });
   }
 
   toComment() {
@@ -1361,6 +1402,7 @@ var map = {
 	"./alert.js": "./app-ui/events/alert.js",
 	"./check_hosts_refresh.js": "./app-ui/events/check_hosts_refresh.js",
 	"./del_hosts.js": "./app-ui/events/del_hosts.js",
+	"./del_nginx.js": "./app-ui/events/del_nginx.js",
 	"./esc.js": "./app-ui/events/esc.js",
 	"./get_on_hosts.js": "./app-ui/events/get_on_hosts.js",
 	"./index.js": "./app-ui/events/index.js",
@@ -1415,6 +1457,8 @@ var map = {
 	"./check_hosts_refresh.js": "./app-ui/events/check_hosts_refresh.js",
 	"./del_hosts": "./app-ui/events/del_hosts.js",
 	"./del_hosts.js": "./app-ui/events/del_hosts.js",
+	"./del_nginx": "./app-ui/events/del_nginx.js",
+	"./del_nginx.js": "./app-ui/events/del_nginx.js",
 	"./esc": "./app-ui/events/esc.js",
 	"./esc.js": "./app-ui/events/esc.js",
 	"./get_on_hosts": "./app-ui/events/get_on_hosts.js",
@@ -1566,6 +1610,52 @@ module.exports = (app, hosts) => {
       if (next_hosts) {
         app.setState({
           current: next_hosts
+        });
+      }
+    });
+  }).catch(e => console.log(e));
+};
+
+/***/ }),
+
+/***/ "./app-ui/events/del_nginx.js":
+/*!************************************!*\
+  !*** ./app-ui/events/del_nginx.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+
+
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = (app, config) => {
+  let list = app.state.nginx_config_list;
+  let idx = list.findIndex(item => item.id === config.id);
+
+  if (idx === -1) {
+    return;
+  }
+
+  list.splice(idx, 1);
+
+  _Agent.default.pact('saveNginxConfigs', list).then(() => {
+    app.setState({
+      nginx_config_list: list
+    }, () => {
+      // 选中下一个 hosts
+      let next_nginx = list[idx] || list[idx - 1] || null;
+
+      if (next_nginx) {
+        app.setState({
+          current: next_nginx
         });
       }
     });
@@ -2171,6 +2261,7 @@ class EditPrompt extends _react.default.Component {
       include: []
     };
     this.current_hosts = null;
+    this.mode = 'hosts';
   }
 
   tryToFocus() {
@@ -2209,19 +2300,20 @@ class EditPrompt extends _react.default.Component {
       }, 100);
     });
 
-    _Agent.default.on('edit_hosts', hosts => {
-      this.current_hosts = hosts;
-      let include = hosts.include || [];
+    _Agent.default.on('edit_hosts', data => {
+      this.current_hosts = data;
+      this.mode = data.mode || 'hosts';
+      let include = data.include || [];
       include = Array.from(new Set(include));
       this.setState({
-        id: hosts.id,
+        id: data.id,
         show: true,
         is_add: false,
-        where: hosts.where || 'local',
-        title: hosts.title || '',
-        url: hosts.url || '',
-        last_refresh: hosts.last_refresh || null,
-        refresh_interval: hosts.refresh_interval || 0,
+        where: data.where || 'local',
+        title: data.title || '',
+        url: data.url || '',
+        last_refresh: data.last_refresh || null,
+        refresh_interval: data.refresh_interval || 0,
         include
       });
       setTimeout(() => {
@@ -2318,7 +2410,11 @@ class EditPrompt extends _react.default.Component {
     let lang = this.props.lang;
     if (!confirm(lang.confirm_del)) return;
 
-    _Agent.default.emit('del_hosts', this.current_hosts);
+    if (this.mode === 'hosts') {
+      _Agent.default.emit('del_hosts', this.current_hosts);
+    } else if (this.mode === 'nginx') {
+      _Agent.default.emit('del_nginx', this.current_hosts);
+    }
 
     this.setState({
       show: false
@@ -3845,6 +3941,8 @@ var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "
 
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
 var _ListItem = _interopRequireDefault(__webpack_require__(/*! ./ListItem.less */ "./app-ui/panel/ListItem.less"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -3867,7 +3965,11 @@ class NginxListItem extends _react.default.Component {
     this.props.setCurrent(this.props.data, 'nginx');
   }
 
-  toEdit() {}
+  toEdit() {
+    console.log(this.props.data);
+
+    _Agent.default.emit('edit_hosts', Object.assign({}, this.props.data));
+  }
 
   toggle() {}
 

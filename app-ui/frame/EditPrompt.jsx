@@ -35,6 +35,7 @@ export default class EditPrompt extends React.Component{
     };
 
     this.current_hosts = null;
+    this.mode = 'hosts';
   }
 
   tryToFocus() {
@@ -71,27 +72,27 @@ export default class EditPrompt extends React.Component{
       }, 100);
     });
 
-    Agent.on('edit_hosts', (hosts) => {
-      this.current_hosts = hosts;
-      let include = hosts.include || [];
+    Agent.on('edit_hosts', (data) => {
+      this.current_hosts = data;
+      this.mode = data.mode || 'hosts';
+      let include = data.include || [];
       include = Array.from(new Set(include));
 
       this.setState({
-        id: hosts.id,
+        id: data.id,
         show: true,
         is_add: false,
-        where: hosts.where || 'local',
-        title: hosts.title || '',
-        url: hosts.url || '',
-        last_refresh: hosts.last_refresh || null,
-        refresh_interval: hosts.refresh_interval || 0,
+        where: data.where || 'local',
+        title: data.title || '',
+        url: data.url || '',
+        last_refresh: data.last_refresh || null,
+        refresh_interval: data.refresh_interval || 0,
         include
       });
       setTimeout(() => {
         this.tryToFocus();
       }, 100);
     });
-
     Agent.on('list_updated', list => {
       let hosts = list.find(i => i.id === this.state.id);
       if (hosts) {
@@ -172,7 +173,12 @@ export default class EditPrompt extends React.Component{
   confirmDel() {
     let { lang } = this.props;
     if (!confirm(lang.confirm_del)) return;
-    Agent.emit('del_hosts', this.current_hosts);
+    if (this.mode === 'hosts') {
+      Agent.emit('del_hosts', this.current_hosts);
+    } else if (this.mode === 'nginx') {
+      Agent.emit('del_nginx', this.current_hosts);
+    }
+
     this.setState({
       show: false
     });

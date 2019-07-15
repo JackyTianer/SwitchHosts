@@ -153,12 +153,17 @@ export default class App extends React.Component{
       hosts.where === 'group';
   }
 
-  toSave() {
+  toSave(type = 'hosts') {
     clearTimeout(this._t);
-
-    this._t = setTimeout(() => {
-      Agent.emit('save', this.state.list, null, true);
-    }, 1000);
+    if (type === 'hosts') {
+      this._t = setTimeout(() => {
+        Agent.emit('save', this.state.list, null, true);
+      }, 1000);
+    } else if (type === 'nginx') {
+      this._t = setTimeout(() => {
+        Agent.emit('saveNginx', this.state.nginx_config_list, null, true);
+      }, 1000);
+    }
   }
 
   setHostsContent(v) {
@@ -180,6 +185,28 @@ export default class App extends React.Component{
       list
     }, () => {
       this.toSave();
+    });
+  }
+
+  setNginxContent(v) {
+    let { current, nginx_config_list } = this.state;
+    if (current.content === v) return; // not changed
+
+    //current = Object.assign({}, current, {
+    //  content: v || ''
+    //})
+    //list = list.slice(0)
+    current.content = v;
+    let idx = nginx_config_list.findIndex(i => i.id === current.id);
+    if (idx !== -1) {
+      nginx_config_list.splice(idx, 1, current);
+    }
+
+    this.setState({
+      current,
+      nginx_config_list
+    }, () => {
+      this.toSave('nginx');
     });
   }
 
@@ -243,6 +270,7 @@ export default class App extends React.Component{
           current={current}
           readonly={App.isReadOnly(current)}
           setHostsContent={this.setHostsContent.bind(this)}
+          setNginxContent={this.setNginxContent.bind(this)}
           lang={this.state.lang}
         />
         <About lang={this.state.lang}/>
