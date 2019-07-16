@@ -9,11 +9,12 @@ const version = require('../../version').version;
 const paths = require('../paths');
 const io = require('../io');
 const jsbeautify = require('js-beautify').js_beautify;
-const apply = require('../apply');
+const apply = require('../applyNginx');
 const sudo = require('../sudo');
 const makeOutHosts = require('../makeOutHosts');
 const cleanData = require('../cleanData');
-const chromeDnsClear = require('../../libs/chrome-dns-clear');
+const exec = require('child_process').exec;
+const nginxUtil = require('../nginx/util');
 
 //const checkAllRemoteHostses = require('./checkAllRemoteHostses')
 
@@ -38,6 +39,7 @@ function tryToApply(svr, cnt, pswd) {
   });
 }
 
+
 module.exports = (svr, list) => {
   //return checkAllRemoteHostses(svr, list, cfg)
   return Promise.resolve()
@@ -56,13 +58,19 @@ module.exports = (svr, list) => {
       let out = makeOutHosts(list);
 
       // clear chrome dns cache by remote debugger
-      // todo 重启nginx
       // chromeDnsClear();
 
       // try to update system hosts
       return tryToApply(svr, out)
         .then(() => io.pWriteFile(fn, cnt))
         .then(() => svr.emit('nginx_saved'))
+        .then(() => {
+          if (list.some((itm) => itm.on)) {
+            return nginxUtil.openNginx();
+          } else {
+            return nginxUtil.closeNginx();
+          }
+        })
         .then(() => list);
     });
 };

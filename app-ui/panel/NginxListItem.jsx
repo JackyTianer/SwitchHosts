@@ -23,11 +23,11 @@ class NginxListItem extends React.Component{
   }
 
   toEdit() {
-    console.log(this.props.data);
-    Agent.emit('edit_hosts', Object.assign({}, this.props.data));
+    Agent.emit('edit_config', Object.assign({}, this.props.data));
   }
 
   toggle() {
+    Agent.emit('toggle_nginx', Object.assign({}, this.props.data));
   }
 
   render() {

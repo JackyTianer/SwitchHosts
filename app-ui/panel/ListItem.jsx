@@ -35,7 +35,7 @@ export default class ListItem extends React.Component{
   }
 
   toEdit() {
-    Agent.emit('edit_hosts', Object.assign({}, this.props.data));
+    Agent.emit('edit_config', Object.assign({}, this.props.data));
   }
 
   componentDidMount() {

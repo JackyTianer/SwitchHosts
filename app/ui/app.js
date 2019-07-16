@@ -1,4 +1,4 @@
-/*! SwitchHosts! app.js v3.3.13.5384, 2019-07-15 16:58:51 */
+/*! SwitchHosts! app.js v3.3.13.5384, 2019-07-16 17:42:55 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1415,6 +1415,7 @@ var map = {
 	"./sudo_cancel.js": "./app-ui/events/sudo_cancel.js",
 	"./sudo_pswd.js": "./app-ui/events/sudo_pswd.js",
 	"./toggle_hosts.js": "./app-ui/events/toggle_hosts.js",
+	"./toggle_nginx.js": "./app-ui/events/toggle_nginx.js",
 	"./top_toggle.js": "./app-ui/events/top_toggle.js",
 	"./update_hosts.js": "./app-ui/events/update_hosts.js",
 	"./update_nginx.js": "./app-ui/events/update_nginx.js"
@@ -1483,6 +1484,8 @@ var map = {
 	"./sudo_pswd.js": "./app-ui/events/sudo_pswd.js",
 	"./toggle_hosts": "./app-ui/events/toggle_hosts.js",
 	"./toggle_hosts.js": "./app-ui/events/toggle_hosts.js",
+	"./toggle_nginx": "./app-ui/events/toggle_nginx.js",
+	"./toggle_nginx.js": "./app-ui/events/toggle_nginx.js",
 	"./top_toggle": "./app-ui/events/top_toggle.js",
 	"./top_toggle.js": "./app-ui/events/top_toggle.js",
 	"./update_hosts": "./app-ui/events/update_hosts.js",
@@ -2085,6 +2088,60 @@ module.exports = (app, hosts) => {
 
 /***/ }),
 
+/***/ "./app-ui/events/toggle_nginx.js":
+/*!***************************************!*\
+  !*** ./app-ui/events/toggle_nginx.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+
+
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const save = __webpack_require__(/*! ./save_nginx */ "./app-ui/events/save_nginx.js");
+
+module.exports = (app, config) => {
+  config.on = !config.on;
+  let lang = app.state.lang;
+  return Promise.resolve().then(() => {
+    let list = app.state.nginx_config_list.slice(0);
+
+    if (config.on) {
+      list.map(item => {
+        if (item.id !== config.id) {
+          item.on = false;
+        }
+      });
+    }
+
+    return list;
+  }).then(list => {
+    let idx = list.findIndex(item => item.id === config.id);
+
+    if (idx === -1) {
+      list.push(Object.assign({}, config));
+    } else {
+      let old_config = list[idx];
+      list.splice(idx, 1, Object.assign({}, old_config, config));
+    }
+
+    return save(app, list, config);
+  }).then(() => {
+    // Agent.pact('statRecord', 'switch');
+    return _Agent.default.pact('notify', 'SwitchHosts!', lang.nginx_switched);
+  });
+};
+
+/***/ }),
+
 /***/ "./app-ui/events/top_toggle.js":
 /*!*************************************!*\
   !*** ./app-ui/events/top_toggle.js ***!
@@ -2300,7 +2357,7 @@ class EditPrompt extends _react.default.Component {
       }, 100);
     });
 
-    _Agent.default.on('edit_hosts', data => {
+    _Agent.default.on('edit_config', data => {
       this.current_hosts = data;
       this.mode = data.mode || 'hosts';
       let include = data.include || [];
@@ -3756,7 +3813,7 @@ class ListItem extends _react.default.Component {
   }
 
   toEdit() {
-    _Agent.default.emit('edit_hosts', Object.assign({}, this.props.data));
+    _Agent.default.emit('edit_config', Object.assign({}, this.props.data));
   }
 
   componentDidMount() {
@@ -3966,12 +4023,12 @@ class NginxListItem extends _react.default.Component {
   }
 
   toEdit() {
-    console.log(this.props.data);
-
-    _Agent.default.emit('edit_hosts', Object.assign({}, this.props.data));
+    _Agent.default.emit('edit_config', Object.assign({}, this.props.data));
   }
 
-  toggle() {}
+  toggle() {
+    _Agent.default.emit('toggle_nginx', Object.assign({}, this.props.data));
+  }
 
   render() {
     let _this$props = this.props,

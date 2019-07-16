@@ -52,7 +52,6 @@ export default class EditPrompt extends React.Component{
       refresh_interval: 0
     });
   }
-
   componentDidMount() {
     Agent.on('add_hosts', (title, uri) => {
       var goWhere = '';
@@ -72,7 +71,7 @@ export default class EditPrompt extends React.Component{
       }, 100);
     });
 
-    Agent.on('edit_hosts', (data) => {
+    Agent.on('edit_config', (data) => {
       this.current_hosts = data;
       this.mode = data.mode || 'hosts';
       let include = data.include || [];
