@@ -52,6 +52,7 @@ export default class EditPrompt extends React.Component{
       refresh_interval: 0
     });
   }
+
   componentDidMount() {
     Agent.on('add_hosts', (title, uri) => {
       var goWhere = '';
@@ -172,6 +173,7 @@ export default class EditPrompt extends React.Component{
   confirmDel() {
     let { lang } = this.props;
     if (!confirm(lang.confirm_del)) return;
+    console.log(this.mode);
     if (this.mode === 'hosts') {
       Agent.emit('del_hosts', this.current_hosts);
     } else if (this.mode === 'nginx') {
@@ -303,7 +305,7 @@ export default class EditPrompt extends React.Component{
     return (
       <div ref={c => this.el_body = c}>
         <div className="ln">
-          <RadioGroup onChange={e => this.setState({ where: e.target.value })} value={this.state.where}>
+          <RadioGroup onChange={e => this.setState({ where: e.target.value })} value={this.state.where} disabled={!this.state.is_add}>
             <RadioButton value="local"><Icon type="file-text"/> {lang.where_local}</RadioButton>
             <RadioButton value="remote"><Icon type="global"/> {lang.where_remote}</RadioButton>
             <RadioButton value="group"><Icon type="copy"/> {lang.where_group}</RadioButton>
@@ -332,7 +334,6 @@ export default class EditPrompt extends React.Component{
 
   render() {
     let { lang } = this.props;
-
     return (
       <MyFrame
         show={this.state.show}

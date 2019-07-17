@@ -15,7 +15,6 @@ module.exports = (app, config) => {
   }
 
   list.splice(idx, 1);
-
   Agent.pact('saveNginxConfigs', list)
     .then(() => {
       app.setState({ nginx_config_list: list }, () => {

@@ -1408,6 +1408,7 @@ var map = {
 	"./index.js": "./app-ui/events/index.js",
 	"./list_updated.js": "./app-ui/events/list_updated.js",
 	"./nginx_list_updated.js": "./app-ui/events/nginx_list_updated.js",
+	"./refresh_list.js": "./app-ui/events/refresh_list.js",
 	"./reload.js": "./app-ui/events/reload.js",
 	"./save.js": "./app-ui/events/save.js",
 	"./save_nginx.js": "./app-ui/events/save_nginx.js",
@@ -1470,6 +1471,8 @@ var map = {
 	"./list_updated.js": "./app-ui/events/list_updated.js",
 	"./nginx_list_updated": "./app-ui/events/nginx_list_updated.js",
 	"./nginx_list_updated.js": "./app-ui/events/nginx_list_updated.js",
+	"./refresh_list": "./app-ui/events/refresh_list.js",
+	"./refresh_list.js": "./app-ui/events/refresh_list.js",
 	"./reload": "./app-ui/events/reload.js",
 	"./reload.js": "./app-ui/events/reload.js",
 	"./save": "./app-ui/events/save.js",
@@ -1859,6 +1862,32 @@ module.exports = function (app, new_list) {
         _Agent.default.emit('select', config.id);
       }
     });
+  });
+};
+
+/***/ }),
+
+/***/ "./app-ui/events/refresh_list.js":
+/*!***************************************!*\
+  !*** ./app-ui/events/refresh_list.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @author oldj
+ * @blog https://oldj.net
+ */
+
+
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = app => {
+  return _Agent.default.pact('refreshList').catch(e => {
+    console.log(e);
   });
 };
 
@@ -2466,6 +2495,7 @@ class EditPrompt extends _react.default.Component {
   confirmDel() {
     let lang = this.props.lang;
     if (!confirm(lang.confirm_del)) return;
+    console.log(this.mode);
 
     if (this.mode === 'hosts') {
       _Agent.default.emit('del_hosts', this.current_hosts);
@@ -2597,7 +2627,8 @@ class EditPrompt extends _react.default.Component {
       onChange: e => this.setState({
         where: e.target.value
       }),
-      value: this.state.where
+      value: this.state.where,
+      disabled: !this.state.is_add
     }, _react.default.createElement(RadioButton, {
       value: "local"
     }, _react.default.createElement(_icon.default, {
@@ -3643,6 +3674,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _icon = _interopRequireDefault(__webpack_require__(/*! antd/lib/icon */ "./node_modules/antd/lib/icon/index.js"));
+
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
 var _ListItem = _interopRequireDefault(__webpack_require__(/*! ./ListItem */ "./app-ui/panel/ListItem.jsx"));
@@ -3665,7 +3698,8 @@ class List extends _react.default.Component {
   constructor(props) {
     super(props);
     this.state = {
-      kw: ''
+      kw: '',
+      isPackup: false
     };
 
     _Agent.default.on('search:kw', kw => {
@@ -3673,6 +3707,8 @@ class List extends _react.default.Component {
         kw
       });
     });
+
+    this.clickSysItm = this.clickSysItm.bind(this);
   }
 
   customItems() {
@@ -3706,6 +3742,12 @@ class List extends _react.default.Component {
     _Agent.default.emit('sort', ids);
   }
 
+  clickSysItm() {
+    this.setState({
+      isPackup: !this.state.isPackup
+    });
+  }
+
   componentDidMount() {
     _sortablejs.default.create(this.el_items, {
       group: 'list-sorting',
@@ -3727,15 +3769,26 @@ class List extends _react.default.Component {
 
   render() {
     return _react.default.createElement("div", {
-      id: "sh-list",
       className: _List.default.root
+    }, _react.default.createElement("div", {
+      className: _List.default['custom-sys-item']
     }, _react.default.createElement(_ListItem.default, _extends({
       data: this.props.sys_hosts
     }, this.props, {
       sys: "1"
     })), _react.default.createElement("div", {
+      onClick: this.clickSysItm,
+      className: _List.default['custom-sys-item_icon']
+    }, this.state.isPackup ? _react.default.createElement(_icon.default, {
+      type: "caret-up"
+    }) : _react.default.createElement(_icon.default, {
+      type: "caret-down"
+    }))), _react.default.createElement("div", {
       ref: c => this.el_items = c,
-      className: _List.default['custom-items']
+      className: "".concat(_List.default['custom-items']),
+      style: {
+        maxHeight: this.state.isPackup ? 0 : 'none'
+      }
     }, this.customItems()));
   }
 
@@ -3753,7 +3806,7 @@ exports.default = List;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"custom-items":"List--custom-items--2fW93"};
+module.exports = {"custom-sys-item":"List--custom-sys-item--1lWhR","custom-sys-item_icon":"List--custom-sys-item_icon--AheUc","custom-items":"List--custom-items--2fW93"};
 
 /***/ }),
 
@@ -3932,15 +3985,35 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _icon = _interopRequireDefault(__webpack_require__(/*! antd/lib/icon */ "./node_modules/antd/lib/icon/index.js"));
+
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
+var _Agent = _interopRequireDefault(__webpack_require__(/*! ../Agent */ "./app-ui/Agent.js"));
+
 var _List = _interopRequireDefault(__webpack_require__(/*! ./List.less */ "./app-ui/panel/List.less"));
+
+var _ListItem = _interopRequireDefault(__webpack_require__(/*! ./ListItem */ "./app-ui/panel/ListItem.jsx"));
 
 var _NginxListItem = _interopRequireDefault(__webpack_require__(/*! ./NginxListItem */ "./app-ui/panel/NginxListItem.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class NginxList extends _react.default.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPackup: false
+    };
+    this.clickSysItm = this.clickSysItm.bind(this);
+  }
+
+  clickSysItm() {
+    this.setState({
+      isPackup: !this.state.isPackup
+    });
+  }
+
   customItems() {
     return this.props.nginx_config_list.map((item, idx) => {
       return _react.default.createElement(_NginxListItem.default, {
@@ -3958,6 +4031,8 @@ class NginxList extends _react.default.Component {
   render() {
     return _react.default.createElement("div", {
       className: _List.default.root
+    }, _react.default.createElement("div", {
+      className: _List.default['custom-sys-item']
     }, _react.default.createElement(_NginxListItem.default, {
       data: this.props.sys_nginx_config,
       current: this.props.current,
@@ -3965,8 +4040,18 @@ class NginxList extends _react.default.Component {
       setCurrent: this.props.setCurrent,
       sys: true
     }), _react.default.createElement("div", {
+      onClick: this.clickSysItm,
+      className: _List.default['custom-sys-item_icon']
+    }, this.state.isPackup ? _react.default.createElement(_icon.default, {
+      type: "caret-up"
+    }) : _react.default.createElement(_icon.default, {
+      type: "caret-down"
+    }))), _react.default.createElement("div", {
       ref: c => this.el_items = c,
-      className: _List.default['custom-items']
+      className: _List.default['custom-items'],
+      style: {
+        maxHeight: this.state.isPackup ? 0 : 'none'
+      }
     }, this.customItems()));
   }
 

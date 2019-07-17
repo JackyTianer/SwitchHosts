@@ -13,7 +13,6 @@ const apply = require('../applyNginx');
 const sudo = require('../sudo');
 const makeOutHosts = require('../makeOutHosts');
 const cleanData = require('../cleanData');
-const exec = require('child_process').exec;
 const nginxUtil = require('../nginx/util');
 
 //const checkAllRemoteHostses = require('./checkAllRemoteHostses')
@@ -66,9 +65,9 @@ module.exports = (svr, list) => {
         .then(() => svr.emit('nginx_saved'))
         .then(() => {
           if (list.some((itm) => itm.on)) {
-            return nginxUtil.openNginx();
+            nginxUtil.openNginx();
           } else {
-            return nginxUtil.closeNginx();
+            nginxUtil.closeNginx();
           }
         })
         .then(() => list);

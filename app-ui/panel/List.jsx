@@ -11,6 +11,7 @@ import Sortable from 'sortablejs';
 import listToArray from 'wheel-js/src/common/listToArray';
 import Agent from '../Agent';
 import { findPositions } from '../content/kw';
+import { Icon } from 'antd';
 import styles from './List.less';
 
 export default class List extends React.Component{
@@ -19,12 +20,14 @@ export default class List extends React.Component{
     super(props);
 
     this.state = {
-      kw: ''
+      kw: '',
+      isPackup: false
     };
 
     Agent.on('search:kw', kw => {
       this.setState({ kw });
     });
+    this.clickSysItm = this.clickSysItm.bind(this);
   }
 
   customItems() {
@@ -60,6 +63,12 @@ export default class List extends React.Component{
     Agent.emit('sort', ids);
   }
 
+  clickSysItm() {
+    this.setState({
+      isPackup: !this.state.isPackup
+    });
+  }
+
   componentDidMount() {
     Sortable.create(this.el_items, {
       group: 'list-sorting'
@@ -80,12 +89,18 @@ export default class List extends React.Component{
 
   render() {
     return (
-      <div id="sh-list" className={styles.root}>
-        <ListItem
-          data={this.props.sys_hosts}
-          {...this.props}
-          sys="1"/>
-        <div ref={c => this.el_items = c} className={styles['custom-items']}>
+      <div className={styles.root}>
+        <div className={styles['custom-sys-item']}>
+          <ListItem
+            data={this.props.sys_hosts}
+            {...this.props}
+            sys="1"/>
+          <div onClick={this.clickSysItm} className={styles['custom-sys-item_icon']}>
+            {this.state.isPackup ? <Icon type="caret-up"/> : <Icon type="caret-down"/>}
+          </div>
+        </div>
+        <div ref={c => this.el_items = c} className={`${styles['custom-items']}`}
+             style={{ maxHeight: this.state.isPackup ? 0 : 'none' }}>
           {this.customItems()}
         </div>
       </div>
