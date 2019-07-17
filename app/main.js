@@ -7,41 +7,42 @@
  * @source https://github.com/oldj/SwitchHosts
  */
 
-const electron = require('electron')
-const path = require('path')
+const electron = require('electron');
+const path = require('path');
 //const fs = require('fs')
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const platform = process.platform;
 
-const paths = require('./server/paths')
-const pref = require('./server/pref')
-let user_language = pref.get('user_language') || (app.getLocale() || '').split('-')[0].toLowerCase() || 'en'
-global.user_language = user_language
+const paths = require('./server/paths');
+const pref = require('./server/pref');
+let user_language = pref.get('user_language') || (app.getLocale() || '').split('-')[0].toLowerCase() || 'en';
+global.user_language = user_language;
 
-require('./server/Server')
+require('./server/Server');
 
-const tray = require('./menu/tray')
-const svr = require('./server/svr')
-const main_menu = require('./menu/main_menu')
-const checkUpdate = require('./server/checkUpdate')
-const windowStateKeeper = require('electron-window-state')
+const tray = require('./menu/tray');
+const svr = require('./server/svr');
+const main_menu = require('./menu/main_menu');
+const checkUpdate = require('./server/checkUpdate');
+const windowStateKeeper = require('electron-window-state');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-let contents
-let willQuitApp = false
-let is_tray_initialized
-let renderer
+let mainWindow;
+let contents;
+let willQuitApp = false;
+let is_tray_initialized;
+let renderer;
 
-function createWindow () {
+function createWindow() {
 
   // Load the previous state with fallback to defaults
   let mainWindowState = windowStateKeeper({
     defaultWidth: 800,
     defaultHeight: 600,
     path: paths.work_path
-  })
+  });
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -55,135 +56,135 @@ function createWindow () {
     icon: path.join(__dirname, 'assets', 'logo_512.png'),
     webPreferences: {
       nodeIntegration: true
-    }
+    },
     // autoHideMenuBar: true,
-    // titleBarStyle: 'hiddenInset'
-  })
+    titleBarStyle: 'default'
+  });
 
   // Let us register listeners on the window, so we can update the state
   // automatically (the listeners will be removed when the window is closed)
   // and restore the maximized or full screen state
-  mainWindowState.manage(mainWindow)
+  mainWindowState.manage(mainWindow);
 
-  contents = mainWindow.webContents
-  app.mainWindow = mainWindow
+  contents = mainWindow.webContents;
+  app.mainWindow = mainWindow;
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/ui/index.html?lang=${user_language}`)
+  mainWindow.loadURL(`file://${__dirname}/ui/index.html?lang=${user_language}`);
 
   if (process.env && process.env.ENV === 'dev') {
-    require('devtron').install()
+    //require('devtron').install()
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
   }
 
   if (pref.get('hide_at_launch')) {
     // mainWindow.minimize();
-    mainWindow.hide()
+    mainWindow.hide();
   }
 
   mainWindow.on('close', (e) => {
     if (willQuitApp) {
       /* the user tried to quit the app */
-      mainWindow = null
+      mainWindow = null;
     } else {
       /* the user only tried to close the window */
-      e.preventDefault()
-      mainWindow.hide()
+      e.preventDefault();
+      mainWindow.hide();
     }
-  })
+  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
-    contents = null
-  })
+    mainWindow = null;
+    contents = null;
+  });
 
   contents.on('did-finish-load', () => {
     if (!is_tray_initialized) {
-      tray.makeTray(app, contents, user_language)
-      is_tray_initialized = true
+      tray.makeTray(app, contents, user_language);
+      is_tray_initialized = true;
     }
-  })
+  });
 
   //require('./bg/events').init(app, contents)
 
-  svr.win = mainWindow
+  svr.win = mainWindow;
 }
 
-const gotTheLock = app.requestSingleInstanceLock()
+const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
-  app.quit()
+  app.quit();
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
-        mainWindow.restore()
+        mainWindow.restore();
       }
-      mainWindow.focus()
+      mainWindow.focus();
     }
-  })
+  });
 
   // Create myWindow, load the rest of the app, etc...
   app.on('ready', () => {
-  })
+  });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  createWindow()
-  main_menu.init(app, user_language)
+  createWindow();
+  main_menu.init(app, user_language);
 
   setTimeout(() => {
     if (renderer) {
-      checkUpdate.check(true)
+      checkUpdate.check(true);
     }
-  }, 1000)
-})
+  }, 1000);
+});
 
 electron.ipcMain.on('reg_renderer', (e) => {
-  renderer = e.sender
-})
+  renderer = e.sender;
+});
 
 electron.ipcMain.on('relaunch', () => {
-  app.relaunch({args: process.argv.slice(1) + ['--relaunch']})
-  app.exit(0)
-})
+  app.relaunch({ args: process.argv.slice(1) + ['--relaunch'] });
+  app.exit(0);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // if (process.platform !== 'darwin') {
   //     app.quit();
   // }
-})
+});
 
 app.on('show', function () {
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
-      mainWindow.restore()
+      mainWindow.restore();
     }
-    mainWindow.show()
+    mainWindow.show();
   } else {
-    createWindow()
+    createWindow();
   }
-})
+});
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (!mainWindow) {
-    createWindow()
+    createWindow();
   } else if (mainWindow.isMinimized()) {
-    mainWindow.restore()
+    mainWindow.restore();
   } else {
-    mainWindow.show()
+    mainWindow.show();
   }
-})
+});
 
-app.on('before-quit', () => willQuitApp = true)
+app.on('before-quit', () => willQuitApp = true);

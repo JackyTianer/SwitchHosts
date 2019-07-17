@@ -4,7 +4,7 @@
 
 Homepage: [https://oldj.github.io/SwitchHosts/](https://oldj.github.io/SwitchHosts/)
 
-SwitchHosts! is an App for managing hosts file, it is based on [Electron](http://electron.atom.io/), [React](https://facebook.github.io/react/), and [Ant Design](https://ant.design), [CodeMirror](http://codemirror.net/), etc.
+SwitchHosts! is an App for managing hosts file, it is based on [Electron](http://electron.atom.io/), [React](https://facebook.github.io/react/), [Ant Design](https://ant.design), [CodeMirror](http://codemirror.net/), etc.
 
 ## Screenshot
 
@@ -31,7 +31,7 @@ You can download the source code and build it yourself, or download the built ve
 
 ### brew
 
-If you are using macOS, you can install SwitchHosts! by `brew cast`:
+On macOS you can install SwitchHosts! by `brew cask`:
 
 ```bash
 brew cask install switchhosts
@@ -39,7 +39,15 @@ brew cask install switchhosts
 
 Thanks to [@gobinathm](https://github.com/gobinathm) and [@iamybj](https://github.com/iamybj) for updating the `brew cask` version.
 
+### scoop
 
+On Windows you can install SwitchHosts! by [scoop](https://scoop.sh/):
+
+```
+scoop install switchhosts
+```
+
+Thanks to [@batkiz](https://github.com/batkiz) for updating the `scoop` version.
 
 ## Backup
 
@@ -79,34 +87,19 @@ SwitchHosts! stores data at `~/.SwitchHosts` (Or folder `.SwitchHosts` under the
     npm run dev
     ```
 
-### Package and Zip
+### Package
 
- - It is recommended to use [electron-packager](https://github.com/electron-userland/electron-packager) for packaging.
-
-    ```bash
-    # install electron-packager for use from cli
-    npm install electron-packager -g
-    ```
-
- - Go to the `./` folder, run `npm run pack` . The packaged file will be the `./dist` folder.
+ - It is recommended to use [electron-builder](https://github.com/electron-userland/electron-builder) for packaging.
+ - Go to the `./` folder, run `npm run make` . The packaged file will be the `./dist` folder.
  - This command may take several minutes to finish when you run it the first time, as it needs time to download dependent files. You can download the dependencies manually [here](https://github.com/electron/electron/releases), or [Taobao mirror](https://npm.taobao.org/mirrors/electron/), then save the files to `~/.electron`. You can check the [Electron Docs](http://electron.atom.io/docs/) for more infomation.
 
     ```bash
     # pack
-    npm run pack  # the packed files will be in ./dist
+    npm run make # the packed files will be in ./dist
 
-    # or pack for a special platform
-    npm run pack-mac  # pack for macOS, the packed files will be in ./dist
-    npm run pack-win  # pack for Windows, the packed files will be in ./dist
+    # or 
+    npm run build-and-make
     ```
-
- - After packaging, you can make a zip file by run the following command.
-
-    ```bash
-    # zip
-    npm run zip  # the zipped files will be in ./dist
-    ```
-
 
 ## Copyright
 

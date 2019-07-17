@@ -11,7 +11,7 @@ import { Checkbox, Input, Radio, Select, Tabs } from 'antd'
 import MyFrame from './MyFrame'
 import classnames from 'classnames'
 import Agent from '../Agent'
-import { version as current_version } from '../../app/version'
+import version from '../../app/version'
 import formatVersion from '../../app/libs/formatVersion'
 import CodeMirror from 'react-codemirror'
 import 'codemirror/mode/shell/shell'
@@ -255,24 +255,30 @@ export default class PreferencesPrompt extends React.Component {
           <a
             href="#"
             onClick={PreferencesPrompt.openDownloadPage}
-          >{formatVersion(current_version)}</a>
+          >{formatVersion(version)}</a>
         </div>
         <Tabs
           defaultActiveKey="1"
           tabPosition="left"
           style={{minHeight: height}}
         >
-          <TabPane tab={lang.pref_tab_general} key="1" style={{height}}>
-            {this.prefLanguage()}
-            {this.prefChoiceMode()}
-            {/*{this.prefAutoLaunch()}*/}
-            {this.prefMinimizeAtLaunch()}
+          <TabPane tab={lang.pref_tab_general} key="1">
+            <div style={{minHeight: height}}>
+              {this.prefLanguage()}
+              {this.prefChoiceMode()}
+              {/*{this.prefAutoLaunch()}*/}
+              {this.prefMinimizeAtLaunch()}
+            </div>
           </TabPane>
-          <TabPane tab={lang.pref_tab_custom_cmd} key="2" style={{height}}>
-            {this.prefAfterCmd()}
+          <TabPane tab={lang.pref_tab_custom_cmd} key="2">
+            <div style={{minHeight: height}}>
+              {this.prefAfterCmd()}
+            </div>
           </TabPane>
-          <TabPane tab={lang.pref_tab_advanced} key="3" style={{height}}>
-            {this.prefAdvanced()}
+          <TabPane tab={lang.pref_tab_advanced} key="3">
+            <div style={{minHeight: height}}>
+              {this.prefAdvanced()}
+            </div>
           </TabPane>
         </Tabs>
       </div>

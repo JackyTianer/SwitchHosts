@@ -1,1 +1,1 @@
-exports.version = [3,4,'1-alpha-bs',2024];
+module.exports = [3,3,"1-alpha-bs",5410]

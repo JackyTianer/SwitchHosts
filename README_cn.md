@@ -31,7 +31,7 @@
 
 ### brew
 
-在 macOS 上，也可以使用 `brew cast` 安装，命令如下：
+在 macOS 上，也可以使用 `brew cask` 安装，命令如下：
 
 ```bash
 brew cask install switchhosts
@@ -39,7 +39,15 @@ brew cask install switchhosts
 
 感谢 [@gobinathm](https://github.com/gobinathm)、[@iamybj](https://github.com/iamybj) 更新 `brew cask` 版本。
 
+### scoop
 
+在 Windows 上，也可以使用 [scoop](https://scoop.sh/) 安装，命令如下：
+
+```
+scoop install switchhosts
+```
+
+感谢 [@batkiz](https://github.com/batkiz) 更新 `scoop` 版本。
 
 ## 文件备份
 
@@ -79,32 +87,18 @@ SwitchHosts! 的数据文件在 `~/.SwitchHosts` 目录下（Windows 用户为�
     npm run dev
     ```
 
-### 打包发布
+### 打包
 
- - 建议使用 [electron-packager](https://github.com/electron-userland/electron-packager) 进行打包
-
-    ```bash
-    # install electron-packager for use from cli
-    npm install electron-packager -g
-    ```
-
- - 在 `./` 目录下，运行 `npm run pack` 命令，打包后的文件位于 `./dist` 目录；
+ - 建议使用 [electron-builder](https://github.com/electron-userland/electron-builder) 进行打包
+ - 在 `./` 目录下，运行 `npm run make` 命令，打包后的文件位于 `./dist` 目录；
  - 首次执行此命令可能需要花费较多时间（需要下载对应的构建文件），也可先手动下载[对应的发布版本](https://github.com/electron/electron/releases)（[淘宝镜像](https://npm.taobao.org/mirrors/electron/)），手动保存到 `~/.electron` 目录下。更多信息请参考 [Electron 文档](http://electron.atom.io/docs/)。
 
     ```bash
     # pack
-    npm run pack  # the packed files will be in ./dist
+    npm run make # the packed files will be in ./dist
 
-    # 也可以只打包特定平台的版本，如
-    npm run pack-mac  # pack for macOS, the packed files will be in ./dist
-    npm run pack-win  # pack for Windows, the packed files will be in ./dist
-    ```
-
- - 打包完成后，可运行以下命令将生成的程序压缩为 zip 文件。
-
-    ```bash
-    # zip
-    npm run zip  # the zipped files will be in ./dist
+    # 或者
+    npm run build-and-make
     ```
 
 ## 更新历史

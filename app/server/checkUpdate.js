@@ -8,7 +8,7 @@
 const request = require('request')
 const cheerio = require('cheerio')
 const {shell, dialog} = require('electron')
-const current_version = require('../version').version
+const current_version = require('../version')
 const m_lang = require('../server/lang')
 const lang = m_lang.getLang(global.user_language)
 const svr = require('./svr')
@@ -72,9 +72,9 @@ exports.check = (is_silent = false) => {
       //let body = res.text
 
       let $ = cheerio.load(body)
-      let a = $('.release-meta .css-truncate-target')
+      let a = $('.release-entry .css-truncate-target')
       if (a.length <= 0) {
-        console.log('not found versios!')
+        console.log('did not find any versions!')
         return
       }
       let last_v = $(a[0]).text()
