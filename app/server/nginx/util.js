@@ -2,6 +2,8 @@ const exec = require('child_process').exec;
 const CMD_START = 'nginx';
 const CMD_RELOAD = 'nginx -s reload';
 const CMD_STOP = 'nginx -s stop';
+const fixPath = require('fix-path');
+fixPath();
 
 
 module.exports = {

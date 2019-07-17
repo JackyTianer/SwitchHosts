@@ -28,6 +28,7 @@
     "antd": "^3.20.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.48.0",
+    "fix-path": "^2.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "react": "^16.8.6",
