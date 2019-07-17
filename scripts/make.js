@@ -31,8 +31,8 @@ const makeApp = async () => {
   await builder.build({
     //targets: Platform.MAC.createTarget(),
     mac: ['default'], // ['default', 'mas'],
-    win: ['nsis:ia32', 'nsis:x64', 'portable:ia32'],
-    linux: ['zip:x64'],
+    // win: ['nsis:ia32', 'nsis:x64', 'portable:ia32'],
+    // linux: ['zip:x64'],
     config: {
       ...cfg_common,
       mac: {
@@ -62,21 +62,21 @@ const makeApp = async () => {
         }],
         artifactName: '${productName}_macOS_${version}(${buildVersion}).${ext}'
       },
-      win: {
-        icon: 'assets/app.ico'
-      },
-      nsis: {
-        //installerIcon: 'assets/installer-icon.ico',
-        oneClick: false,
-        allowToChangeInstallationDirectory: true,
-        artifactName: '${productName}_windows_installer_${version}(${buildVersion}).${ext}'
-      },
-      portable: {
-        artifactName: '${productName}_windows_portable_${version}(${buildVersion}).${ext}'
-      },
-      linux: {
-        artifactName: '${productName}_linux_${arch}_${version}(${buildVersion}).${ext}'
-      }
+      // win: {
+      //   icon: 'assets/app.ico'
+      // },
+      // nsis: {
+      //   //installerIcon: 'assets/installer-icon.ico',
+      //   oneClick: false,
+      //   allowToChangeInstallationDirectory: true,
+      //   artifactName: '${productName}_windows_installer_${version}(${buildVersion}).${ext}'
+      // },
+      // portable: {
+      //   artifactName: '${productName}_windows_portable_${version}(${buildVersion}).${ext}'
+      // },
+      // linux: {
+      //   artifactName: '${productName}_linux_${arch}_${version}(${buildVersion}).${ext}'
+      // }
     }
   })
 
