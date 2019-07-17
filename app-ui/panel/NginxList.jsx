@@ -1,10 +1,6 @@
-
-
 import { Icon } from 'antd';
 import React from 'react';
-import Agent from '../Agent';
 import styles from './List.less';
-import ListItem from './ListItem';
 import NginxListItem from './NginxListItem';
 
 class NginxList extends React.Component{
