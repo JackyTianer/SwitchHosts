@@ -143,7 +143,7 @@ app.on('ready', () => {
 
   setTimeout(() => {
     if (renderer) {
-      checkUpdate.check(true);
+      // checkUpdate.check(true);
     }
   }, 1000);
 });

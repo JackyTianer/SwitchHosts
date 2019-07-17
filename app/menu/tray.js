@@ -74,11 +74,11 @@ function makeMenu (app, list, contents, sys_lang) {
     }
   })
 
-  menu.push({
-    label: lang.check_update, type: 'normal', click: () => {
-      checkUpdate.check()
-    }
-  })
+  // menu.push({
+  //   label: lang.check_update, type: 'normal', click: () => {
+  //     checkUpdate.check()
+  //   }
+  // })
 
   if (os === 'darwin') {
     menu.push({

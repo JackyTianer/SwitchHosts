@@ -51,61 +51,61 @@ function compareVersion (a, b) {
 }
 
 exports.check = (is_silent = false) => {
-  let release_url = require('../configs').url_download
-  console.log('start check updates..')
-
-  request(release_url, (err, res, body) => {
-      let buttons = [lang.ok]
-      if (err) {
-        console.log(err)
-
-        if (!is_silent) {
-          dialog.showMessageBox({
-            type: 'error',
-            message: lang.check_update_err,
-            buttons
-          })
-        }
-        return
-      }
-
-      //let body = res.text
-
-      let $ = cheerio.load(body)
-      let a = $('.release-entry .css-truncate-target')
-      if (a.length <= 0) {
-        console.log('did not find any versions!')
-        return
-      }
-      let last_v = $(a[0]).text()
-      // Array.from(a).map(i => {
-      //     console.log($(i).text());
-      // });
-
-      let cmp = compareVersion(current_version, last_v)
-      console.log('cmp', cmp)
-      let message
-      if (cmp >= 0) {
-        // 没有发现新版本
-        message = m_lang.fill(lang.check_update_nofound, formatVersion(current_version))
-
-      } else {
-        // 发现新版本
-        message = m_lang.fill(lang.check_update_found, last_v)
-        buttons.unshift(lang.cancel)
-        svr.broadcast('update_found', last_v)
-      }
-
-      if (!is_silent) {
-        dialog.showMessageBox({
-          type: 'info',
-          message,
-          buttons
-        }, (res) => {
-          if (cmp < 0 && res === 1) {
-            shell.openExternal(release_url)
-          }
-        })
-      }
-    })
+  // let release_url = require('../configs').url_download
+  // console.log('start check updates..')
+  //
+  // request(release_url, (err, res, body) => {
+  //     let buttons = [lang.ok]
+  //     if (err) {
+  //       console.log(err)
+  //
+  //       if (!is_silent) {
+  //         dialog.showMessageBox({
+  //           type: 'error',
+  //           message: lang.check_update_err,
+  //           buttons
+  //         })
+  //       }
+  //       return
+  //     }
+  //
+  //     //let body = res.text
+  //
+  //     let $ = cheerio.load(body)
+  //     let a = $('.release-entry .css-truncate-target')
+  //     if (a.length <= 0) {
+  //       console.log('did not find any versions!')
+  //       return
+  //     }
+  //     let last_v = $(a[0]).text()
+  //     // Array.from(a).map(i => {
+  //     //     console.log($(i).text());
+  //     // });
+  //
+  //     let cmp = compareVersion(current_version, last_v)
+  //     console.log('cmp', cmp)
+  //     let message
+  //     if (cmp >= 0) {
+  //       // 没有发现新版本
+  //       message = m_lang.fill(lang.check_update_nofound, formatVersion(current_version))
+  //
+  //     } else {
+  //       // 发现新版本
+  //       message = m_lang.fill(lang.check_update_found, last_v)
+  //       buttons.unshift(lang.cancel)
+  //       svr.broadcast('update_found', last_v)
+  //     }
+  //
+  //     if (!is_silent) {
+  //       dialog.showMessageBox({
+  //         type: 'info',
+  //         message,
+  //         buttons
+  //       }, (res) => {
+  //         if (cmp < 0 && res === 1) {
+  //           shell.openExternal(release_url)
+  //         }
+  //       })
+  //     }
+  //   })
 }
