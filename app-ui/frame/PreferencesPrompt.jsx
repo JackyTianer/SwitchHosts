@@ -6,12 +6,12 @@
 'use strict'
 
 import React from 'react'
-import R from 'ramda'
+import lodash from 'lodash'
 import { Checkbox, Input, Radio, Select, Tabs } from 'antd'
 import MyFrame from './MyFrame'
 import classnames from 'classnames'
 import Agent from '../Agent'
-import { version as current_version } from '../../app/version'
+import version from '../../app/version'
 import formatVersion from '../../app/libs/formatVersion'
 import CodeMirror from 'react-codemirror'
 import 'codemirror/mode/shell/shell'
@@ -63,7 +63,7 @@ export default class PreferencesPrompt extends React.Component {
     this.setState({
       show: false
     }, () => {
-      let prefs = R.pick(pref_keys, this.state)
+      let prefs = lodash.pick(this.state, pref_keys)
 
       Agent.pact('setPref', prefs)
         .then(() => {
@@ -124,7 +124,8 @@ export default class PreferencesPrompt extends React.Component {
     return (
       <div className="ln">
         <div>{lang.language}</div>
-        <div className="inform">{lang.should_restart_after_change_language}</div>
+        <div
+          className="inform">{lang.should_restart_after_change_language}</div>
         <div>
           <Select
             value={this.state.user_language || ''}
@@ -169,11 +170,11 @@ export default class PreferencesPrompt extends React.Component {
         <div>
           <div className="inform">{lang.pref_after_cmd_info}</div>
           {/*<Input*/}
-            {/*type="textarea"*/}
-            {/*rows={8}*/}
-            {/*defaultValue={this.state.after_cmd}*/}
-            {/*placeholder={lang.pref_after_cmd_placeholder}*/}
-            {/*onChange={(e) => this.updateAfterCmd(e.target.value)}*/}
+          {/*type="textarea"*/}
+          {/*rows={8}*/}
+          {/*defaultValue={this.state.after_cmd}*/}
+          {/*placeholder={lang.pref_after_cmd_placeholder}*/}
+          {/*onChange={(e) => this.updateAfterCmd(e.target.value)}*/}
           {/*/>*/}
           <CodeMirror
             className="pref-cm"
@@ -254,24 +255,30 @@ export default class PreferencesPrompt extends React.Component {
           <a
             href="#"
             onClick={PreferencesPrompt.openDownloadPage}
-          >{formatVersion(current_version)}</a>
+          >{formatVersion(version)}</a>
         </div>
         <Tabs
           defaultActiveKey="1"
           tabPosition="left"
           style={{minHeight: height}}
         >
-          <TabPane tab={lang.pref_tab_general} key="1" style={{height}}>
-            {this.prefLanguage()}
-            {this.prefChoiceMode()}
-            {/*{this.prefAutoLaunch()}*/}
-            {this.prefMinimizeAtLaunch()}
+          <TabPane tab={lang.pref_tab_general} key="1">
+            <div style={{minHeight: height}}>
+              {this.prefLanguage()}
+              {this.prefChoiceMode()}
+              {/*{this.prefAutoLaunch()}*/}
+              {this.prefMinimizeAtLaunch()}
+            </div>
           </TabPane>
-          <TabPane tab={lang.pref_tab_custom_cmd} key="2" style={{height}}>
-            {this.prefAfterCmd()}
+          <TabPane tab={lang.pref_tab_custom_cmd} key="2">
+            <div style={{minHeight: height}}>
+              {this.prefAfterCmd()}
+            </div>
           </TabPane>
-          <TabPane tab={lang.pref_tab_advanced} key="3" style={{height}}>
-            {this.prefAdvanced()}
+          <TabPane tab={lang.pref_tab_advanced} key="3">
+            <div style={{minHeight: height}}>
+              {this.prefAdvanced()}
+            </div>
           </TabPane>
         </Tabs>
       </div>

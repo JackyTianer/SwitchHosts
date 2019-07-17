@@ -12,6 +12,7 @@ const path = require('path')
 //const fs = require('fs')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
+const platform = process.platform
 
 const paths = require('./server/paths')
 const pref = require('./server/pref')
@@ -45,16 +46,19 @@ function createWindow () {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: mainWindowState.width
-    , height: mainWindowState.height
-    , x: mainWindowState.x
-    , y: mainWindowState.y
-    , minWidth: 400
-    , minHeight: 250
-    , fullscreenable: true
-    , icon: path.join(__dirname, 'assets', 'logo_512.png')
-    //, autoHideMenuBar: true
-    //, titleBarStyle: 'hiddenInset'
+    width: mainWindowState.width,
+    height: mainWindowState.height,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    minWidth: 400,
+    minHeight: 250,
+    fullscreenable: true,
+    icon: path.join(__dirname, 'assets', 'logo_512.png'),
+    webPreferences: {
+      nodeIntegration: true
+    },
+    // autoHideMenuBar: true,
+     titleBarStyle: platform === 'darwin' ? 'hiddenInset' : 'default'
   })
 
   // Let us register listeners on the window, so we can update the state
@@ -69,6 +73,8 @@ function createWindow () {
   mainWindow.loadURL(`file://${__dirname}/ui/index.html?lang=${user_language}`)
 
   if (process.env && process.env.ENV === 'dev') {
+    //require('devtron').install()
+
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
   }
@@ -110,19 +116,22 @@ function createWindow () {
   svr.win = mainWindow
 }
 
-const should_quit = app.makeSingleInstance((commandLine, workingDirectory) => {
-  // Someone tried to run a second instance, we should focus our window.
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore()
-    }
-    mainWindow.show()
-    // mainWindow.focus();
-  }
-})
-
-if (should_quit) {
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
   app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore()
+      }
+      mainWindow.focus()
+    }
+  })
+
+  // Create myWindow, load the rest of the app, etc...
+  app.on('ready', () => {
+  })
 }
 
 // This method will be called when Electron has finished

@@ -1,10 +1,27 @@
 {
   "presets": [
-    "latest",
-    "stage-0",
-    "react"
+    [
+      "@babel/env",
+      {
+        "modules": "commonjs",
+        "useBuiltIns": false,
+        "targets": {
+          "browsers": [
+            "Chrome >= 60"
+          ]
+        }
+      }
+    ],
+    "@babel/react",
+    "@babel/flow"
   ],
   "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
     [
       "import",
       {
