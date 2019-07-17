@@ -7,7 +7,6 @@ class NginxList extends React.Component{
 
   constructor(props) {
     super(props);
-
     this.state = {
       isPackup: false
     };
