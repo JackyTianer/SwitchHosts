@@ -10,8 +10,9 @@
     "dll": "webpack --config scripts/webpack.dll.js --progress --profile --colors",
     "dev": "cross-env ENV=dev electron app",
     "less": "npm run _ln && lessc app-ui/styles/main.less app-ui/styles/main.css",
-    "build": "gulp ver && npm run less && npm run dll && npm run build2",
+    "build": "gulp ver && npm run less && npm run dll && npm run build2-prod",
     "build2": "webpack --config scripts/webpack.config.js --progress --profile --colors",
+    "build2-prod": "webpack --config scripts/webpack-prod.config.js --progress --profile --colors",
     "w": "npm run build2 -- -w",
     "pack": "gulp pack",
     "pack-mac": "gulp pack --platform=macOS",
@@ -127,29 +128,16 @@
     "yargs": "^6.5.0"
   },
   "ava": {
-    "files": [
-      "src/**/*.ava.js",
-      "test/*.js",
-      "!**/node_modules/**/*.*"
-    ],
-    "source": [
-      "**/*.{js,jsx}",
-      "!dist/**/*"
-    ],
+    "files": ["src/**/*.ava.js", "test/*.js", "!**/node_modules/**/*.*"],
+    "source": ["**/*.{js,jsx}", "!dist/**/*"],
     "match": [],
     "concurrency": 5,
     "failFast": true,
     "tap": true,
     "powerAssert": false,
-    "require": [
-      "babel-polyfill",
-      "babel-register"
-    ],
+    "require": ["babel-polyfill", "babel-register"],
     "babel": {
-      "presets": [
-        "latest",
-        "stage-0"
-      ]
+      "presets": ["latest", "stage-0"]
     }
   }
 }

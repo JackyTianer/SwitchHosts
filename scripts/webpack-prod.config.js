@@ -3,16 +3,16 @@
  * @blog http://oldj.net
  */
 
-'use strict';
+'use strict'
 
-const path = require('path');
-const webpack = require('webpack');
-const moment = require('moment');
-const WebpackNotifierPlugin = require('webpack-notifier');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const LESSPluginLists = require('less-plugin-lists');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const version = require('../app/version').version.join('.');
+const path = require('path')
+const webpack = require('webpack')
+const moment = require('moment')
+const WebpackNotifierPlugin = require('webpack-notifier')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const LESSPluginLists = require('less-plugin-lists')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const version = require('../app/version').version.join('.')
 
 module.exports = {
   mode: 'production',
@@ -48,7 +48,7 @@ module.exports = {
               options: {
                 javascriptEnabled: true,
                 plugins: [
-                  new LESSPluginLists({ advanced: true })
+                  new LESSPluginLists({advanced: true})
                 ]
               }
             }
@@ -108,4 +108,4 @@ module.exports = {
     }),
     new webpack.BannerPlugin(`SwitchHosts! [file] v${version}, ${moment().format('YYYY-MM-DD HH:mm:ss')}`)
   ]
-};
+}
