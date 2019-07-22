@@ -4,22 +4,23 @@
  */
 
 'use strict';
+
 const io = require('./io');
 const fs = require('fs');
 const path = require('path');
 const version = require('../version');
 
-module.exports = (work_path, sys_hosts_path) => {
+module.exports = (work_path, sys_nginx_path) => {
   if(!io.isDirectory(work_path)){
     fs.mkdirSync(work_path);
   }
 
-  let cnt = fs.readFileSync(sys_hosts_path, 'utf-8');
-  let fn_data = path.join(work_path, 'data.json');
+  let cnt = fs.readFileSync(sys_nginx_path, 'utf-8');
+  let fn_data = path.join(work_path, 'nginx_data.json');
   let data = {
     list: [{
-      title: 'My hosts',
-      content: '# My hosts'
+      title: 'My Nginx',
+      content: '# My Nginx'
     }, {
       title: 'backup',
       content: cnt
