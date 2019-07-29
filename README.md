@@ -1,106 +1,53 @@
-# SwitchHosts!
+## 前言
+本项目基于[SwitchHosts](https://github.com/oldj/SwitchHosts)，在原有功能上额外拓展了自动切换nginx配置的功能，目前暂且支持`macOS`, windows版本正在开发中
 
- - [简体中文](README_cn.md)
+那么我们来看看二次开发专用版SwitchHost增加了什么功能吧~
 
-Homepage: [https://oldj.github.io/SwitchHosts/](https://oldj.github.io/SwitchHosts/)
+## 新的创建类型
 
-SwitchHosts! is an App for managing hosts file, it is based on [Electron](http://electron.atom.io/), [React](https://facebook.github.io/react/), [Ant Design](https://ant.design), [CodeMirror](http://codemirror.net/), etc.
+下图所示，我们创建规则可以新增Nginx类型
 
-## Screenshot
-
-<img src="https://raw.githubusercontent.com/oldj/SwitchHosts/master/assets/capture.png" alt="Capture" width="980" style="border:1px solid #979797;">
-
-
-## Features
-
- - Switch hosts quickly
- - Syntax highlight
- - Remote hosts
- - Switch from system tray
- - macOS only: [Alfred workflow](http://www.packal.org/workflow/switchhosts) support
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-f77b4d0a80718bc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-## Install
+##  新的侧边看板
 
-### Download
+Nginx处于新的看板之中，同时，为了方便你的查找，我们可以展开收起看板列表
 
-You can download the source code and build it yourself, or download the built version from following links:
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-091fec4a205e0772.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
- - [SwitchHosts! Download Page 1 (GitHub release)](https://github.com/oldj/SwitchHosts/releases)
- - [SwitchHosts! Download Page 2 (Baidu Yunpan)](http://pan.baidu.com/share/link?shareid=150951&uk=3607385901)
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-f6e8da4e76b89dd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### brew
+# 自动的Nginx启动关闭
 
-On macOS you can install SwitchHosts! by `brew cask`:
+我们点击开关的时候，会自动启动或者重启你的Nginx,当没有任何开关打开的时候，则会自动关闭Nginx服务器，节约你电脑的性能哦（因为Nginx的特殊性，不像host可以多个，所以只能开启一个哦，程序已经处理了）
 
-```bash
-brew cask install switchhosts
-```
-
-Thanks to [@gobinathm](https://github.com/gobinathm) and [@iamybj](https://github.com/iamybj) for updating the `brew cask` version.
-
-### scoop
-
-On Windows you can install SwitchHosts! by [scoop](https://scoop.sh/):
-
-```
-scoop install switchhosts
-```
-
-Thanks to [@batkiz](https://github.com/batkiz) for updating the `scoop` version.
-
-## Backup
-
-SwitchHosts! stores data at `~/.SwitchHosts` (Or folder `.SwitchHosts` under the current user's home path on Windows), the `~/.SwitchHosts/data.json` contains data, while the `~/.SwitchHosts/prefereces.json` contains preferences info.
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-1233be5c0693a938.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-## Run and Build
+## Nginx专有编辑面板
 
-### Environment
+采用Nginx专有编辑面板，方便你快速编辑你本地的Nginx配置文件
 
- - Install [Node.js](https://nodejs.org/)
- - Change to the folder `./`, run `npm install` to install dependented libraries
- - Change to the folder `./app`, run `npm install` again
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-fbe8a66747ee43c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-    ```bash
-    npm install
-    cd app && npm install && cd ..
-    ```
+## 支持从顶部菜单快捷切换Nginx
+![image.png](https://upload-images.jianshu.io/upload_images/8032324-9144d9659d4b48a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-### Build and run
+TODO List
+-   ~~兼容原先的hosts数据~~
+-   ~~配置Nginx列表~~
+-   ~~自动重启Nginx~~
+-   ~~在Tray中切换Nginx~~
+-   支持其他操作系统
 
- - Change to the folder `./`, run `npm run dll` to build common files
- - Change to the folder `./`, run `npm run build`
- - Change to the folder `./`, run `npm start`, the App should start
-
-    ```bash
-    # create dll file
-    npm run dll
+## 构建项目
+- clone 该项目
+- npm run build-and-make 
+- dist目录将会创建对应的app以及dmg,使用即可
  
-    # build
-    npm run build
+当然，也可以直接使用我提前打包好的版本
+下载地址: [https://pan.baidu.com/s/1R6zE6K4L7oAjdqDZYdjmSg] 提取码: hary
 
-    # start
-    npm start
 
-    # or start in developer mode
-    npm run dev
-    ```
 
-### Package
-
- - It is recommended to use [electron-builder](https://github.com/electron-userland/electron-builder) for packaging.
- - Go to the `./` folder, run `npm run make` . The packaged file will be the `./dist` folder.
- - This command may take several minutes to finish when you run it the first time, as it needs time to download dependent files. You can download the dependencies manually [here](https://github.com/electron/electron/releases), or [Taobao mirror](https://npm.taobao.org/mirrors/electron/), then save the files to `~/.electron`. You can check the [Electron Docs](http://electron.atom.io/docs/) for more infomation.
-
-    ```bash
-    # pack
-    npm run make # the packed files will be in ./dist
-
-    # or 
-    npm run build-and-make
-    ```
-
-## Copyright
-
-SwitchHosts! is a free and open source software, it is released under the MIT license.
