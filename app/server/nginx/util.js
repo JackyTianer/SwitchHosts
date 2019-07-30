@@ -3,6 +3,7 @@ const CMD_START = 'nginx';
 const CMD_RELOAD = 'nginx -s reload';
 const CMD_STOP = 'pkill -9 nginx';
 const fixPath = require('fix-path');
+const { dialog } = require('electron');
 fixPath();
 
 
@@ -12,7 +13,15 @@ module.exports = {
       exec(CMD_START, (error, stdout, stderr) => {
         if (!!error) {
           exec(CMD_RELOAD, (error) => {
-            resolve();
+            if (!!error) {
+              dialog.showMessageBox({
+                title: '错误',
+                type: 'error',
+                message: `启动失败\n${error.message}`
+              });
+            } else {
+              resolve();
+            }
           });
         } else {
           resolve();
@@ -23,7 +32,16 @@ module.exports = {
   closeNginx() {
     return new Promise((resolve) => {
       exec(CMD_STOP, (error) => {
-        resolve();
+        if (!!error) {
+          dialog.showMessageBox({
+            title: '错误',
+            type: 'error',
+            message: `关闭失败：Nginx并未成功启动`
+          });
+        } else {
+          resolve();
+        }
+
       });
     });
   }

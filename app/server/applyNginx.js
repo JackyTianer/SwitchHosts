@@ -89,9 +89,7 @@ function tryToApply(content, callback) {
 }
 
 function wrapContent(cnt) {
-  return `# SwitchHosts!
-
-${cnt}`;
+  return `${cnt}`;
 }
 
 module.exports = (cnt, pswd) => {
