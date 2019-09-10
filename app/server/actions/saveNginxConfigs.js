@@ -11,6 +11,7 @@ const io = require('../io');
 const jsbeautify = require('js-beautify').js_beautify;
 const apply = require('../applyNginx');
 const sudo = require('../sudo');
+const os = require('os');
 const makeOutHosts = require('../makeOutHosts');
 const cleanData = require('../cleanData');
 const nginxUtil = require('../nginx/util');
@@ -62,6 +63,11 @@ module.exports = (svr, list) => {
       // try to update system hosts
       return tryToApply(svr, out)
         .then(() => io.pWriteFile(fn, cnt))
+        .then(() => {
+          if (os.type() === 'Windows_NT') {
+            return io.pWriteFile(paths.windwos_nginx_file_path, cnt)
+          }
+        })
         .then(() => svr.emit('nginx_saved'))
         .then(() => {
           if (list.some((itm) => itm.on)) {

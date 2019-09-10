@@ -4,12 +4,12 @@
  * @homepage: https://oldj.net
  */
 
-const path = require('path')
-const builder = require('electron-builder')
-const homedir = require('os').homedir()
-const moment = require('moment')
+const path = require('path');
+const builder = require('electron-builder');
+const homedir = require('os').homedir();
+const moment = require('moment');
 //const Platform = builder.Platform
-const version = require('../app/version')
+const version = require('../app/version');
 //const dist_dir = path.normalize(path.join(__dirname, '..', 'dist'))
 
 const cfg_common = {
@@ -25,13 +25,13 @@ const cfg_common = {
     cache: path.join(homedir, '.electron'),
     mirror: 'https://npm.taobao.org/mirrors/electron/'
   }
-}
+};
 
-const makeApp = async () => {
+const makeApp = async() => {
   await builder.build({
     //targets: Platform.MAC.createTarget(),
     mac: ['default'], // ['default', 'mas'],
-    // win: ['nsis:ia32', 'nsis:x64', 'portable:ia32'],
+    win: ['nsis:ia32', 'nsis:x64', 'portable:ia32'],
     // linux: ['zip:x64'],
     config: {
       ...cfg_common,
@@ -78,11 +78,11 @@ const makeApp = async () => {
         artifactName: '${productName}_linux_${arch}_${version}(${buildVersion}).${ext}'
       }
     }
-  })
+  });
 
-  console.log('done!')
-}
+  console.log('done!');
+};
 
-(async () => {
-  await makeApp()
-})()
+(async() => {
+  await makeApp();
+})();
