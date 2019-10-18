@@ -49,5 +49,7 @@ TODO List
 当然，也可以直接使用我提前打包好的版本
 下载地址: [https://pan.baidu.com/s/1R6zE6K4L7oAjdqDZYdjmSg] 提取码: hary
 
+ps: windows版本目前进度有点问题
+
 
 
